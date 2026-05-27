@@ -33,53 +33,39 @@ bool read_int_safe(int &n) {
 int main() {
     srand((unsigned int)time(NULL));
 
-    cout << "请输入密码参数（密码长度(12-16) 大写最少(>=2) 小写最少(>=2) 数字最少(>=2) 其他最少(>=2)）：" << endl;
+    cout << "请输入密码长度(12-16)，大写字母个数(≥2)，小写字母个数(≥2)，数字个数(≥2)，其它符号个数(≥2)" << endl;
 
     int total, min_u, min_l, min_d, min_o;
 
-    if (!read_int_safe(total)) {
-        cout << "输入错误：请输入有效的整数" << endl;
-        return 1;
-    }
-    if (!read_int_safe(min_u)) {
-        cout << "输入错误：请输入有效的整数" << endl;
-        return 1;
-    }
-    if (!read_int_safe(min_l)) {
-        cout << "输入错误：请输入有效的整数" << endl;
-        return 1;
-    }
-    if (!read_int_safe(min_d)) {
-        cout << "输入错误：请输入有效的整数" << endl;
-        return 1;
-    }
-    if (!read_int_safe(min_o)) {
-        cout << "输入错误：请输入有效的整数" << endl;
+    if (!read_int_safe(total) || !read_int_safe(min_u) ||
+        !read_int_safe(min_l) || !read_int_safe(min_d) || !read_int_safe(min_o)) {
+        cout << "输入非法" << endl;
         return 1;
     }
 
     if (total < 12 || total > 16) {
-        cout << "输入错误：密码长度必须在12到16之间" << endl;
+        cout << "密码长度[" << total << "]不正确" << endl;
         return 1;
     }
     if (min_u < 2 || min_u > total) {
-        cout << "输入错误：大写字母最少数量必须在2到" << total << "之间" << endl;
+        cout << "大写字母个数[" << min_u << "]不正确" << endl;
         return 1;
     }
     if (min_l < 2 || min_l > total) {
-        cout << "输入错误：小写字母最少数量必须在2到" << total << "之间" << endl;
+        cout << "小写字母个数[" << min_l << "]不正确" << endl;
         return 1;
     }
     if (min_d < 2 || min_d > total) {
-        cout << "输入错误：数字最少数量必须在2到" << total << "之间" << endl;
+        cout << "数字个数[" << min_d << "]不正确" << endl;
         return 1;
     }
     if (min_o < 2 || min_o > total) {
-        cout << "输入错误：其他符号最少数量必须在2到" << total << "之间" << endl;
+        cout << "其它符号个数[" << min_o << "]不正确" << endl;
         return 1;
     }
     if (min_u + min_l + min_d + min_o > total) {
-        cout << "输入错误：各类字符最少数量之和超过密码总长度" << endl;
+        cout << "所有字符类型之和[" << min_u << "+" << min_l << "+"
+             << min_d << "+" << min_o << "]大于总密码长度[" << total << "]" << endl;
         return 1;
     }
 

@@ -58,48 +58,43 @@ int main() {
     /* 跳过第2行行尾（含可能的 \r\n） */
     cin.ignore(1000, '\n');
 
-    /* 步骤3：读后续10行密码，逐条检查 */
+    /* 步骤3：先一次性读取全部10行密码，存入数组 */
+    char pwd[10][512];
+    int  pwdlen[10];
     for (int k = 0; k < 10; k++) {
-        char pwd[512];
-        if (!cin.getline(pwd, 512)) {
+        if (!cin.getline(pwd[k], 512)) {
             cout << "错误" << endl;
             return 0;
         }
-
         /* 去除 Windows 行尾 \r */
-        int len = (int)strlen(pwd);
-        if (len > 0 && pwd[len - 1] == '\r') pwd[--len] = '\0';
+        pwdlen[k] = (int)strlen(pwd[k]);
+        if (pwdlen[k] > 0 && pwd[k][pwdlen[k] - 1] == '\r') pwd[k][--pwdlen[k]] = '\0';
+    }
 
+    /* 步骤4：对10行密码整体检查，输出唯一结果 */
+    bool ok = true;
+    for (int k = 0; k < 10 && ok; k++) {
         /* 检查条件1：密码的总长是否符合要求（实际长度 == 声明的总长） */
-        if (len != total) {
-            cout << "错误" << endl;
-            return 0;
-        }
+        if (pwdlen[k] != total) { ok = false; break; }
 
         /* 统计各类字符数量 */
         int cnt_u = 0, cnt_l = 0, cnt_d = 0, cnt_o = 0;
-        for (int i = 0; i < len; i++) {
-            unsigned char c = (unsigned char)pwd[i];
-            if      (isupper(c))          cnt_u++;
-            else if (islower(c))          cnt_l++;
-            else if (isdigit(c))          cnt_d++;
-            else if (is_other_char(pwd[i])) cnt_o++;
-            /* 不属于四类的字符不计入任何统计，导致条件3不满足 */
+        for (int i = 0; i < pwdlen[k]; i++) {
+            unsigned char c = (unsigned char)pwd[k][i];
+            if      (isupper(c))             cnt_u++;
+            else if (islower(c))             cnt_l++;
+            else if (isdigit(c))             cnt_d++;
+            else if (is_other_char(pwd[k][i])) cnt_o++;
+            /* 不属于四类的字符不计入，导致条件3不满足 */
         }
 
-        /* 检查条件3：各种类型字符数量的总和是否等于总长度（无非法字符） */
-        if (cnt_u + cnt_l + cnt_d + cnt_o != len) {
-            cout << "错误" << endl;
-            return 0;
-        }
+        /* 检查条件3：各类字符总和是否等于总长度（无非法字符） */
+        if (cnt_u + cnt_l + cnt_d + cnt_o != pwdlen[k]) { ok = false; break; }
 
-        /* 检查条件2：各种类型字符的数量是否符合各自的最小要求 */
-        if (cnt_u < min_u || cnt_l < min_l || cnt_d < min_d || cnt_o < min_o) {
-            cout << "错误" << endl;
-            return 0;
-        }
+        /* 检查条件2：各类字符数量是否符合各自的最小要求 */
+        if (cnt_u < min_u || cnt_l < min_l || cnt_d < min_d || cnt_o < min_o) { ok = false; break; }
     }
 
-    cout << "正确" << endl;
+    cout << (ok ? "正确" : "错误") << endl;
     return 0;
 }

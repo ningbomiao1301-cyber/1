@@ -20,7 +20,7 @@ int main()
 {
     char str[33];
 
-    cout << "ÇëÊäÈë0/1×Ö·û´®" << endl;
+    cout << "è¯·è¾“å…¥0/1å­—ç¬¦ä¸²" << endl;
     cin >> str;
     cout << binary_to_decimal(str) << endl;
 

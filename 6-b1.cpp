@@ -39,8 +39,6 @@ int main()
 
     cout << "共有" << int(pnum - a) << "个整数" << endl;
     cout << "依次输出的" << int(pnum - a) << "个整数";
-    if (pnum != a)
-        cout << " ";
 
     pa = a;
     while (pa < pnum) {

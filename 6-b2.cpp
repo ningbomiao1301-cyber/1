@@ -33,7 +33,7 @@ int main()
 {
     char str[82], *p;
 
-    cout << "è¯·è¾“å…¥å­—ç¬¦ä¸²" << endl;
+    cout << "ÇëÊäÈë×Ö·û´®" << endl;
     if (fgets(str, 82, stdin) == NULL)
         *str = '\0';
 

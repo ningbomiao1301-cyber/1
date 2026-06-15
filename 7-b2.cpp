@@ -1,4 +1,4 @@
-/* 7-b2.cpp */
+/* 7-b2.cpp：弹出式菜单函数实现 */
 #include <iostream>
 #include <conio.h>
 using namespace std;
@@ -24,6 +24,7 @@ static int is_gb2312_byte(const unsigned char ch)
     return ch >= 0xA1 && ch <= 0xFE;
 }
 
+/* 计算字符串在控制台中的显示宽度，GB2312 汉字按 2 列处理 */
 static int display_width(const char str[])
 {
     int width = 0;
@@ -58,6 +59,7 @@ static void put_spaces(char dest[], int *pos, const int count)
     }
 }
 
+/* 将字符串复制到指定宽度内，遇到半个汉字位置时停止复制 */
 static void append_text_fit(char dest[], int *pos, int *used_width, const int max_width, const char src[])
 {
     int i = 0;
@@ -87,6 +89,7 @@ static void append_text_fit(char dest[], int *pos, int *used_width, const int ma
     }
 }
 
+/* 生成定宽菜单内容行，不足部分补空格 */
 static void make_fit_line(char dest[], const char src[], const int width)
 {
     int pos = 0;
@@ -97,6 +100,7 @@ static void make_fit_line(char dest[], const char src[], const int width)
     dest[pos] = '\0';
 }
 
+/* 追加一个中文制表符，中文制表符在 GBK/GB2312 下占 2 字节 */
 static void append_table_char(char dest[], int *pos, const char table_char[])
 {
     dest[*pos] = table_char[0];
@@ -104,6 +108,7 @@ static void append_table_char(char dest[], int *pos, const char table_char[])
     *pos += 2;
 }
 
+/* 生成带居中标题的上边框 */
 static void make_top_line(char dest[], const char title[], const int width)
 {
     static const char left_top[] = "\xA9\xB0";
@@ -146,6 +151,7 @@ static void make_top_line(char dest[], const char title[], const int width)
     dest[pos] = '\0';
 }
 
+/* 生成下边框 */
 static void make_bottom_line(char dest[], const int width)
 {
     static const char left_bottom[] = "\xA9\xB8";
@@ -186,6 +192,7 @@ static void print_menu_row(const int x, const int y, const char content[], const
     cout << vertical;
 }
 
+/* 统计菜单项数量，NULL 和空串都会使首字节为 '\0' */
 static int menu_item_count(const char menu[][MAX_ITEM_LEN])
 {
     int count = 0;
@@ -196,6 +203,7 @@ static int menu_item_count(const char menu[][MAX_ITEM_LEN])
     return count;
 }
 
+/* 调整菜单宽度：保证偶数、至少能显示标题，并限制在内部缓冲区可承受范围内 */
 static int adjusted_width(const struct PopMenu *para)
 {
     int width = para->width;
@@ -213,6 +221,7 @@ static int adjusted_width(const struct PopMenu *para)
     return width;
 }
 
+/* 调整菜单高度，至少保留一行内容区 */
 static int adjusted_high(const struct PopMenu *para)
 {
     if (para->high < 1)
@@ -221,6 +230,7 @@ static int adjusted_high(const struct PopMenu *para)
     return para->high;
 }
 
+/* 按当前滚动位置和选中项重画菜单 */
 static void draw_pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu *para, const int count, const int top, const int selected)
 {
     char line[MAX_LINE_LEN];
@@ -247,6 +257,7 @@ static void draw_pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu 
     print_at(para->start_x, para->start_y + high + 1, line, para->bg_color, para->fg_color);
 }
 
+/* 保证选中项始终处于当前可见区域内 */
 static void keep_selected_visible(int *top, const int selected, const int high)
 {
     if (selected < *top)
@@ -259,8 +270,8 @@ static void keep_selected_visible(int *top, const int selected, const int high)
 }
 
 /***************************************************************************
-  Function: pop_menu
-  Purpose : draw a pop-up menu and return the selected item number, or 0
+  函数名称：pop_menu
+  功    能：绘制弹出式菜单并返回选中的菜单项序号，未选择则返回 0
 ***************************************************************************/
 int pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu *para)
 {

@@ -1,14 +1,15 @@
-/* 7-b2.h */
+/* 7-b2.h：弹出式菜单接口 */
 #pragma once
 
+/* POP 菜单需要的参数 */
 struct PopMenu {
-    const char *title;
-    int start_x;
-    int start_y;
-    int width;
-    int high;
-    int bg_color;
-    int fg_color;
+    const char *title;  /* 菜单标题 */
+    int start_x;        /* 左上角 x 坐标 */
+    int start_y;        /* 左上角 y 坐标 */
+    int width;          /* 菜单宽度，包含左右边框之间的显示区域 */
+    int high;           /* 菜单高度，包含上下边框之间的显示区域 */
+    int bg_color;       /* 背景色 */
+    int fg_color;       /* 前景色 */
 };
 
 #define MAX_ITEM_LEN 80

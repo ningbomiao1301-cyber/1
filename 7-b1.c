@@ -1,4 +1,4 @@
-/* 7-b1.c */
+/* 7-b1.c：秒数转换为日期时间 */
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
@@ -14,12 +14,12 @@ static int _getch(void)
 #endif
 
 struct tj_time {
-    int tj_year;
-    int tj_month;
-    int tj_day;
-    int tj_hour;
-    int tj_minute;
-    int tj_second;
+    int tj_year;    /* 年 */
+    int tj_month;   /* 月，1-12 */
+    int tj_day;     /* 日，1-28/29/30/31 */
+    int tj_hour;    /* 时，0-23 */
+    int tj_minute;  /* 分，0-59 */
+    int tj_second;  /* 秒，0-59 */
 };
 
 static int tj_is_leap_year(const int year)
@@ -55,8 +55,8 @@ static int tj_days_of_month(const int year, const int month)
 }
 
 /***************************************************************************
-  Function: wait_for_enter
-  Purpose : show prompt and wait for Enter
+  函数名称：wait_for_enter
+  功    能：显示提示并等待回车
 ***************************************************************************/
 void wait_for_enter(void)
 {
@@ -79,8 +79,8 @@ void wait_for_enter(void)
 }
 
 /***************************************************************************
-  Function: system_time_output
-  Purpose : convert by system function and print
+  函数名称：system_time_output
+  功    能：调用系统函数完成转换并输出
 ***************************************************************************/
 void system_time_output(const time_t input_time)
 {
@@ -94,8 +94,8 @@ void system_time_output(const time_t input_time)
 }
 
 /***************************************************************************
-  Function: tj_time_output
-  Purpose : print custom time struct
+  函数名称：tj_time_output
+  功    能：按指定格式输出自定义时间结构体
 ***************************************************************************/
 void tj_time_output(const struct tj_time *const tp)
 {
@@ -103,8 +103,8 @@ void tj_time_output(const struct tj_time *const tp)
 }
 
 /***************************************************************************
-  Function: tj_time_convert
-  Purpose : convert seconds from 1970-01-01 00:00:00 to local Beijing time
+  函数名称：tj_time_convert
+  功    能：将 1970-01-01 00:00:00 起经过的秒数转换为本地日期时间
 ***************************************************************************/
 struct tj_time *tj_time_convert(int input_time)
 {
@@ -116,8 +116,8 @@ struct tj_time *tj_time_convert(int input_time)
     int month;
 
     /*
-       The demo compares against localtime on a China locale.  The fixed
-       difference from UTC is +8 hours; leap seconds are ignored by request.
+       题目中的参考程序使用本地时间输出。中国时区相对于 UTC 固定多 8 小时，
+       本题不考虑闰秒，因此先补上该固定偏移后再拆分日期和时间。
     */
     total_seconds = (long long)input_time + 8LL * 60 * 60;
 
@@ -156,7 +156,7 @@ struct tj_time *tj_time_convert(int input_time)
 }
 
 /***************************************************************************
-  Function: main
+  函数名称：main
 ***************************************************************************/
 int main(void)
 {

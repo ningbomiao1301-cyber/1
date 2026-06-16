@@ -1,11 +1,11 @@
-/* 7-b1.c：秒数转换为日期时间 */
-#define _CRT_SECURE_NO_WARNINGS
+/* 学号 姓名 班级 */
+#define _CRT_SECURE_NO_WARNINGS        /* 使用被VS认为unsafe的函数 */
 
 #include <stdio.h>
-#include <time.h>
+#include <time.h>       /* 系统时间函数对应的头文件，自定义函数中禁止使用 */
 
 #ifdef _WIN32
-#include <conio.h>
+#include <conio.h>      /* _getch()函数对应的头文件 */
 #else
 static int _getch(void)
 {
@@ -13,13 +13,15 @@ static int _getch(void)
 }
 #endif
 
+/* 如果有需要，可在此处定义自定义需要的函数 */
+
 struct tj_time {
-    int tj_year;    /* 年 */
-    int tj_month;   /* 月，1-12 */
-    int tj_day;     /* 日，1-28/29/30/31 */
-    int tj_hour;    /* 时，0-23 */
-    int tj_minute;  /* 分，0-59 */
-    int tj_second;  /* 秒，0-59 */
+    int tj_year;    /* 表示年 */
+    int tj_month;   /* 表示月(1-12) */
+    int tj_day;     /* 表示日(1-28/29/30/31) */
+    int tj_hour;    /* 表示小时(0-23) */
+    int tj_minute;  /* 表示分(0-59) */
+    int tj_second;  /* 表示秒(0-59) */
 };
 
 static int tj_is_leap_year(const int year)
@@ -55,8 +57,11 @@ static int tj_days_of_month(const int year, const int month)
 }
 
 /***************************************************************************
-  函数名称：wait_for_enter
+  函数名称：
   功    能：显示提示并等待回车
+  输入参数：
+  返 回 值：
+  说    明：
 ***************************************************************************/
 void wait_for_enter(void)
 {
@@ -79,23 +84,30 @@ void wait_for_enter(void)
 }
 
 /***************************************************************************
-  函数名称：system_time_output
-  功    能：调用系统函数完成转换并输出
+  函数名称：
+  功    能：调用系统函数完成转换，将输入秒数转换为与本机时区对应的结构体并输出
+  输入参数：
+  返 回 值：
+  说    明：
 ***************************************************************************/
 void system_time_output(const time_t input_time)
 {
-    struct tm *tt;
+    struct tm *tt;  /* struct tm为系统定义的结构体 */
 
-    tt = localtime(&input_time);
+    tt = localtime(&input_time);    /* localtime为系统函数 */
     if (tt != NULL)
+        /* tm_*** 为struct tm中的成员，和本题自定义的struct tj_time中的数据不完全吻合，具体含义自己查阅相关资料 */
         printf("%04d-%02d-%02d %02d:%02d:%02d\n", tt->tm_year + 1900, tt->tm_mon + 1, tt->tm_mday, tt->tm_hour, tt->tm_min, tt->tm_sec);
 
     return;
 }
 
 /***************************************************************************
-  函数名称：tj_time_output
-  功    能：按指定格式输出自定义时间结构体
+  函数名称：
+  功    能：自定义结构体输出函数
+  输入参数：
+  返 回 值：
+  说    明：
 ***************************************************************************/
 void tj_time_output(const struct tj_time *const tp)
 {
@@ -103,22 +115,23 @@ void tj_time_output(const struct tj_time *const tp)
 }
 
 /***************************************************************************
-  函数名称：tj_time_convert
-  功    能：将 1970-01-01 00:00:00 起经过的秒数转换为本地日期时间
+  函数名称：
+  功    能：自定义转换函数
+  输入参数：
+  返 回 值：
+  说    明：
 ***************************************************************************/
 struct tj_time *tj_time_convert(int input_time)
 {
-    static struct tj_time result;
+    static struct tj_time result;   /* 定义静态局部变量，保证返回值有效 */
     long long total_seconds;
     long long days;
     int seconds_of_day;
     int year;
     int month;
 
-    /*
-       题目中的参考程序使用本地时间输出。中国时区相对于 UTC 固定多 8 小时，
-       本题不考虑闰秒，因此先补上该固定偏移后再拆分日期和时间。
-    */
+    /* 实现过程开始，可自行增加需要的定义及执行语句即可 */
+
     total_seconds = (long long)input_time + 8LL * 60 * 60;
 
     days = total_seconds / (24LL * 60 * 60);
@@ -152,11 +165,17 @@ struct tj_time *tj_time_convert(int input_time)
     result.tj_month = month;
     result.tj_day = (int)days + 1;
 
-    return &result;
+    /* 实现过程结束 */
+
+    return &result; /* 注意，返回的是静态局部变量的地址，此语句不准改 */
 }
 
 /***************************************************************************
-  函数名称：main
+  函数名称：
+  功    能：
+  输入参数：
+  返 回 值：
+  说    明：
 ***************************************************************************/
 int main(void)
 {
@@ -164,8 +183,9 @@ int main(void)
     struct tj_time *tp;
 
     for (;;) {
-        int ret = scanf("%d", &read_time);
+        int ret = scanf("%d", &read_time); /* 因为采用输入重定向，此处不加任何提示 */
 
+        /* 输入错误或者<0则退出循环 */
         if (ret != 1 || read_time < 0)
             break;
 
@@ -181,7 +201,7 @@ int main(void)
     }
 
     if (1) {
-        int t = (int)time(0);
+        int t = (int)time(0);       /* 系统函数，取当前系统时间（从1970-01-01 00:00:00开始的秒数） */
 
         printf("\xB5\xB1\xC7\xB0\xCF\xB5\xCD\xB3\xCA\xB1\xBC\xE4" "     : %d\n", t);
         printf("\xCF\xB5\xCD\xB3\xD7\xAA\xBB\xBB\xB5\xC4\xBD\xE1\xB9\xFB" "   : ");

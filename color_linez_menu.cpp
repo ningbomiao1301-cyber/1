@@ -28,6 +28,7 @@ static char read_menu_choice(void)
     } while (ch == '\r' || ch == '\n');
     if (ch >= 'a' && ch <= 'z')
         ch = ch - 'a' + 'A';
+    cct_cls();
     return char(ch);
 }
 
@@ -387,7 +388,6 @@ void linez_run_menu(void)
     do {
         show_menu();
         choice = read_menu_choice();
-        cct_cls();
         switch (choice) {
             case 'A':
                 linez_menu_a();

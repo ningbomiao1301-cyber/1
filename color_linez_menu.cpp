@@ -12,7 +12,7 @@ static int ask_size_or_return(int &rows, int &cols)
 {
     while (!linez_input_size(rows, cols)) {
         char again[8];
-        cout << "Try again? (Y/N): ";
+        cout << "是否重新输入？输入 Y 继续，其他返回: ";
         cin >> setw(7) >> again;
         if (again[0] != 'Y' && again[0] != 'y')
             return 0;
@@ -28,7 +28,7 @@ void linez_menu_a(void)
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
-    cout << endl << "Initial five balls:" << endl;
+    cout << endl << "初始五个彩球:" << endl;
     linez_print_board(game);
     linez_wait_end();
 }
@@ -48,15 +48,15 @@ void linez_menu_b(void)
     make_game(game, rows, cols);
     linez_fill_percent(game, 60);
     linez_print_board(game);
-    if (!linez_read_position("Source", rows, cols, sr, sc) ||
-        !linez_read_position("Destination", rows, cols, dr, dc)) {
+    if (!linez_read_position("起点", rows, cols, sr, sc) ||
+        !linez_read_position("终点", rows, cols, dr, dc)) {
         linez_wait_end();
         return;
     }
     if (linez_find_path(game, sr, sc, dr, dc, path))
         linez_print_path(path);
     else
-        cout << "No path can be found." << endl;
+        cout << "没有找到可达路径。" << endl;
     linez_wait_end();
 }
 
@@ -65,7 +65,7 @@ static void after_successful_move(LinezGame &game)
     int score_gain;
     int removed = linez_remove_lines(game, score_gain);
     if (removed > 0) {
-        cout << "Removed " << removed << " balls, score +" << score_gain << "." << endl;
+        cout << "消除了 " << removed << " 个彩球，得分 +" << score_gain << "。" << endl;
         return;
     }
     linez_place_random_balls(game, LINEZ_NEXT_BALLS, game.next_colors);
@@ -87,27 +87,27 @@ void linez_menu_c(void)
         int dr;
         int dc;
         LinezPath path;
-        cout << endl << "Score: " << game.score << endl;
+        cout << endl << "当前得分: " << game.score << endl;
         linez_print_board(game);
-        int ret = linez_read_position_or_quit("Source", rows, cols, sr, sc);
+        int ret = linez_read_position_or_quit("起点", rows, cols, sr, sc);
         if (ret == 0)
             break;
         if (ret < 0)
             continue;
-        ret = linez_read_position_or_quit("Destination", rows, cols, dr, dc);
+        ret = linez_read_position_or_quit("终点", rows, cols, dr, dc);
         if (ret == 0)
             break;
         if (ret < 0)
             continue;
         if (!linez_move_ball(game, sr, sc, dr, dc, path)) {
-            cout << "Invalid move." << endl;
+            cout << "移动无效。" << endl;
             continue;
         }
         linez_print_path(path);
         after_successful_move(game);
     }
     if (linez_is_game_over(game))
-        cout << "Game over. Final score: " << game.score << endl;
+        cout << "游戏结束。最终得分: " << game.score << endl;
     linez_wait_end();
 }
 
@@ -172,7 +172,7 @@ void linez_menu_f(void)
             continue;
         if (sr < 0) {
             if (game.board[dr][dc] == 0) {
-                linez_show_message(0, 2, "Choose a ball first.");
+                linez_show_message(0, 2, "请先选择一个彩球。");
                 continue;
             }
             sr = dr;
@@ -186,7 +186,7 @@ void linez_menu_f(void)
                 redraw_graph_game(game);
                 break;
             }
-            linez_show_message(0, 2, "No path or invalid target.");
+            linez_show_message(0, 2, "无通路或目标无效。");
             linez_draw_cell(game, sr, sc, 0, 1);
             sr = -1;
         }
@@ -240,7 +240,7 @@ void linez_menu_g(void)
         }
         if (selected_r < 0) {
             if (game.board[row][col] == 0) {
-                linez_show_message(0, 2, "Click a ball.");
+                linez_show_message(0, 2, "请单击一个彩球。");
                 continue;
             }
             selected_r = row;
@@ -255,7 +255,7 @@ void linez_menu_g(void)
                 graph_turn_after_move(game);
             }
             else {
-                linez_show_message(0, 2, "Move failed.");
+                linez_show_message(0, 2, "移动失败。");
             }
             selected_r = -1;
             selected_c = -1;
@@ -264,7 +264,7 @@ void linez_menu_g(void)
     cct_disable_mouse();
     cct_setcursor(CCT_CURSOR_VISIBLE_NORMAL);
     cct_cls();
-    cout << "Game over or exited. Score: " << game.score << endl;
+    cout << "游戏结束或已退出。得分: " << game.score << endl;
     linez_wait_end();
 }
 
@@ -272,16 +272,16 @@ static void show_menu(void)
 {
     cct_setcolor();
     cout << endl;
-    cout << "================ Color Linez ================" << endl;
-    cout << "A. random five balls and print internal board" << endl;
-    cout << "B. generate 60 percent balls and find path" << endl;
-    cout << "C. full game by internal board" << endl;
-    cout << "D. graph frame without separators" << endl;
-    cout << "E. graph frame with separators" << endl;
-    cout << "F. graph 60 percent board and one mouse move" << endl;
-    cout << "G. full graph game" << endl;
-    cout << "Q. quit" << endl;
-    cout << "Select: ";
+    cout << "================ 彩球游戏 ================" << endl;
+    cout << "A. 随机生成五个彩球并打印内部数组" << endl;
+    cout << "B. 生成百分之六十的彩球并查找路径" << endl;
+    cout << "C. 内部数组方式的完整游戏" << endl;
+    cout << "D. 伪图形界面框架（无分隔线）" << endl;
+    cout << "E. 伪图形界面框架（有分隔线）" << endl;
+    cout << "F. 伪图形界面生成百分之六十彩球并移动一次" << endl;
+    cout << "G. 伪图形界面完整游戏" << endl;
+    cout << "Q. 退出" << endl;
+    cout << "请选择: ";
 }
 
 void linez_run_menu(void)
@@ -316,7 +316,7 @@ void linez_run_menu(void)
             case 'Q':
                 break;
             default:
-                cout << "Invalid choice." << endl;
+                cout << "菜单选择无效。" << endl;
                 break;
         }
     } while (choice != 'Q');

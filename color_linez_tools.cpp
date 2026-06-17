@@ -48,21 +48,21 @@ const char *linez_color_name(int color)
 {
     switch (color) {
         case 1:
-            return "Red";
+            return "红色";
         case 2:
-            return "Green";
+            return "绿色";
         case 3:
-            return "Blue";
+            return "蓝色";
         case 4:
-            return "Yellow";
+            return "黄色";
         case 5:
-            return "Pink";
+            return "粉色";
         case 6:
-            return "Cyan";
+            return "青色";
         case 7:
-            return "White";
+            return "白色";
         default:
-            return "None";
+            return "无";
     }
 }
 
@@ -101,7 +101,7 @@ void linez_pause(const char *prompt)
     cct_setcolor();
     if (prompt != NULL)
         cout << prompt;
-    cout << " Press Enter to continue...";
+    cout << " 请按回车键继续...";
     while (_getch() != '\r')
         ;
     cout << endl;
@@ -110,7 +110,7 @@ void linez_pause(const char *prompt)
 void linez_wait_end(void)
 {
     char word[32];
-    cout << endl << "Input End to return menu: ";
+    cout << endl << "请输入 End 返回菜单: ";
     do {
         cin >> setw(31) >> word;
     } while (strcmp(word, "End") != 0);
@@ -118,16 +118,16 @@ void linez_wait_end(void)
 
 int linez_input_size(int &rows, int &cols)
 {
-    cout << "Input rows and columns (7-9): ";
+    cout << "请输入行数和列数(7-9): ";
     cin >> rows >> cols;
     if (!cin) {
         cin.clear();
         cin.ignore(1024, '\n');
-        cout << "Invalid input." << endl;
+        cout << "输入无效。" << endl;
         return 0;
     }
     if (rows < LINEZ_MIN_SIZE || rows > LINEZ_MAX_SIZE || cols < LINEZ_MIN_SIZE || cols > LINEZ_MAX_SIZE) {
-        cout << "Rows and columns must be in [7,9]." << endl;
+        cout << "行数和列数必须在[7,9]范围内。" << endl;
         return 0;
     }
     return 1;
@@ -146,7 +146,7 @@ int linez_read_position(const char *prompt, int rows, int cols, int &row, int &c
 {
     char row_ch;
     int col_no;
-    cout << prompt << " (row A-I, col 1-9): ";
+    cout << prompt << "（行 A-I，列 1-9）: ";
     cin >> row_ch >> col_no;
     if (!cin) {
         cin.clear();
@@ -156,7 +156,7 @@ int linez_read_position(const char *prompt, int rows, int cols, int &row, int &c
     row = parse_row_char(row_ch);
     col = col_no - 1;
     if (row < 0 || row >= rows || col < 0 || col >= cols) {
-        cout << "Position out of board." << endl;
+        cout << "坐标超出棋盘范围。" << endl;
         return 0;
     }
     return 1;
@@ -166,7 +166,7 @@ int linez_read_position_or_quit(const char *prompt, int rows, int cols, int &row
 {
     char row_ch;
     int col_no;
-    cout << prompt << " (Q 0 to quit): ";
+    cout << prompt << "（输入 Q 0 退出）: ";
     cin >> row_ch >> col_no;
     if (!cin) {
         cin.clear();
@@ -178,7 +178,7 @@ int linez_read_position_or_quit(const char *prompt, int rows, int cols, int &row
     row = parse_row_char(row_ch);
     col = col_no - 1;
     if (row < 0 || row >= rows || col < 0 || col >= cols) {
-        cout << "Position out of board." << endl;
+        cout << "坐标超出棋盘范围。" << endl;
         return -1;
     }
     return 1;
@@ -216,14 +216,14 @@ void linez_print_board(const LinezGame &game)
 void linez_print_path(const LinezPath &path)
 {
     if (path.count <= 0) {
-        cout << "No path." << endl;
+        cout << "没有可达路径。" << endl;
         return;
     }
-    cout << "Path: ";
+    cout << "路径: ";
     for (int i = 0; i < path.count; i++) {
         linez_print_coord(path.row[i], path.col[i]);
         if (i != path.count - 1)
-            cout << " -> ";
+            cout << " 到 ";
     }
     cout << endl;
 }

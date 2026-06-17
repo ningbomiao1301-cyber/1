@@ -20,6 +20,26 @@ static int ask_size_or_return(int &rows, int &cols)
     return 1;
 }
 
+static char read_menu_choice(void)
+{
+    int ch;
+    do {
+        ch = _getch();
+    } while (ch == '\r' || ch == '\n');
+    if (ch >= 'a' && ch <= 'z')
+        ch = ch - 'a' + 'A';
+    cout << char(ch) << endl;
+    return char(ch);
+}
+
+static void print_next_colors(const LinezGame &game)
+{
+    cout << endl << "下3个彩球的颜色分别是：";
+    for (int i = 0; i < LINEZ_NEXT_BALLS; i++)
+        cout << setw(3) << game.next_colors[i];
+    cout << endl;
+}
+
 void linez_menu_a(void)
 {
     LinezGame game;
@@ -28,7 +48,7 @@ void linez_menu_a(void)
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
-    cout << endl << "在规定范围内随机生成五个彩球的位置，内部数组如下：" << endl;
+    cout << endl << endl << "初始数组：" << endl;
     linez_print_board(game);
     linez_wait_end();
 }
@@ -47,30 +67,38 @@ void linez_menu_b(void)
         return;
     make_game(game, rows, cols);
     linez_fill_percent(game, 60);
+    cout << endl << endl << "当前数组：" << endl;
     linez_print_board(game);
-    if (!linez_read_position("起始坐标", rows, cols, sr, sc) ||
-        !linez_read_position("目的坐标", rows, cols, dr, dc)) {
+    print_next_colors(game);
+    if (!linez_read_position("请以字母+数字形式[例： c2]输入要移动球的矩阵坐标：", rows, cols, sr, sc) ||
+        !linez_read_position("请以字母+数字形式[例： c2]输入要移动球的目的坐标：", rows, cols, dr, dc)) {
         linez_wait_end();
         return;
     }
-    if (linez_find_path(game, sr, sc, dr, dc, path))
+    cout << "输入为" << char('A' + sr) << "行" << (sc + 1) << "列" << endl;
+    cout << "目标为" << char('A' + dr) << "行" << (dc + 1) << "列" << endl;
+    if (linez_find_path(game, sr, sc, dr, dc, path)) {
+        linez_print_board_with_path(game, path, "查找结果数组：");
+        linez_print_board_with_path(game, path, "移动路径（不同色标识）：");
         linez_print_path(path);
+    }
     else
         cout << "没有找到可达路径。" << endl;
     linez_wait_end();
 }
 
-static void after_successful_move(LinezGame &game)
+static int after_successful_move(LinezGame &game)
 {
     int score_gain;
     int removed = linez_remove_lines(game, score_gain);
     if (removed > 0) {
         cout << "消除了 " << removed << " 个彩球，得分 +" << score_gain << "。" << endl;
-        return;
+        return score_gain;
     }
     linez_place_random_balls(game, LINEZ_NEXT_BALLS, game.next_colors);
     linez_remove_lines(game, score_gain);
     linez_prepare_next(game);
+    return score_gain;
 }
 
 void linez_menu_c(void)
@@ -87,24 +115,29 @@ void linez_menu_c(void)
         int dr;
         int dc;
         LinezPath path;
-        cout << endl << "当前得分：" << game.score << endl;
+        cout << endl << "当前数组：" << endl;
         linez_print_board(game);
-        int ret = linez_read_position_or_quit("起始坐标", rows, cols, sr, sc);
+        print_next_colors(game);
+        int ret = linez_read_position_or_quit("请以字母+数字形式[例： c2]输入要移动球的矩阵坐标：", rows, cols, sr, sc);
         if (ret == 0)
             break;
         if (ret < 0)
             continue;
-        ret = linez_read_position_or_quit("目的坐标", rows, cols, dr, dc);
+        cout << "输入为" << char('A' + sr) << "行" << (sc + 1) << "列" << endl;
+        ret = linez_read_position_or_quit("请以字母+数字形式[例： c2]输入要移动球的目的坐标：", rows, cols, dr, dc);
         if (ret == 0)
             break;
         if (ret < 0)
             continue;
+        cout << "输入为" << char('A' + dr) << "行" << (dc + 1) << "列" << endl;
         if (!linez_move_ball(game, sr, sc, dr, dc, path)) {
             cout << "移动无效。" << endl;
             continue;
         }
-        linez_print_path(path);
-        after_successful_move(game);
+        cout << endl << "移动后的数组（不同色标识）：" << endl;
+        linez_print_board(game);
+        int score_gain = after_successful_move(game);
+        cout << "本次得分：" << score_gain << "  总得分：" << game.score << endl;
     }
     if (linez_is_game_over(game))
         cout << "游戏结束。最终得分：" << game.score << endl;
@@ -119,6 +152,11 @@ void linez_menu_d(void)
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
+    cout << endl << endl << "初始数组：" << endl;
+    linez_print_board(game);
+    cout << endl << "按回车键显示图形...";
+    while (_getch() != '\r')
+        ;
     linez_graph_setup();
     linez_draw_frame(game, 0);
     linez_draw_board(game, 0);
@@ -134,6 +172,11 @@ void linez_menu_e(void)
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
+    cout << endl << endl << "初始数组：" << endl;
+    linez_print_board(game);
+    cout << endl << "按回车键显示图形...";
+    while (_getch() != '\r')
+        ;
     linez_graph_setup();
     linez_draw_frame(game, 1);
     linez_draw_board(game, 1);
@@ -294,8 +337,7 @@ void linez_run_menu(void)
     char choice;
     do {
         show_menu();
-        cin >> choice;
-        choice = char(toupper((unsigned char)choice));
+        choice = read_menu_choice();
         switch (choice) {
             case 'A':
                 linez_menu_a();

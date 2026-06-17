@@ -166,6 +166,7 @@ int linez_read_position(const char *prompt, int rows, int cols, int &row, int &c
 int linez_read_position_or_quit(const char *prompt, int rows, int cols, int &row, int &col);
 void linez_print_coord(int row, int col);
 void linez_print_board(const LinezGame &game);
+void linez_print_board_with_path(const LinezGame &game, const LinezPath &path, const char *title);
 void linez_print_path(const LinezPath &path);
 void linez_show_message(int x, int y, const char *message);
 

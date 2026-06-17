@@ -107,7 +107,7 @@ void linez_pause(const char *prompt)
 void linez_wait_end(void)
 {
     char word[32];
-    cout << endl << "请输入END返回菜单：";
+    cout << endl << "本小题结束，请输入END继续...";
     do {
         cin >> setw(31) >> word;
     } while (strcmp(word, "END") != 0);
@@ -151,7 +151,7 @@ int linez_read_position(const char *prompt, int rows, int cols, int &row, int &c
 {
     char row_ch;
     int col_no;
-    cout << "请输入" << prompt << "，行用A到I表示，列用1到9表示：";
+    cout << prompt;
     cin >> row_ch >> col_no;
     if (!cin) {
         cin.clear();
@@ -171,7 +171,7 @@ int linez_read_position_or_quit(const char *prompt, int rows, int cols, int &row
 {
     char row_token[32];
     int col_no;
-    cout << "请输入" << prompt << "，行用A到I表示，列用1到9表示；输入END返回菜单：";
+    cout << prompt;
     cin >> setw(31) >> row_token;
     if (!cin) {
         cin.clear();
@@ -205,20 +205,61 @@ void linez_print_coord(int row, int col)
 
 void linez_print_board(const LinezGame &game)
 {
-    cout << "    ";
+    cout << "    |";
     for (int c = 0; c < game.cols; c++)
-        cout << setw(3) << (c + 1);
+        cout << setw(4) << (c + 1);
+    cout << endl;
+    cout << "----+";
+    for (int c = 0; c < game.cols; c++)
+        cout << "----";
     cout << endl;
     for (int r = 0; r < game.rows; r++) {
-        cout << " " << char('A' + r) << "  ";
+        cout << char('A' + r) << "   |";
         for (int c = 0; c < game.cols; c++) {
             if (game.board[r][c] == 0) {
                 cct_setcolor();
-                cout << setw(3) << '.';
+                cout << setw(4) << 0;
             }
             else {
                 cct_setcolor(COLOR_BLACK, linez_color_to_fg(game.board[r][c]));
-                cout << setw(3) << game.board[r][c];
+                cout << setw(4) << game.board[r][c];
+                cct_setcolor();
+            }
+        }
+        cout << endl;
+    }
+    cct_setcolor();
+}
+
+void linez_print_board_with_path(const LinezGame &game, const LinezPath &path, const char *title)
+{
+    int mark[LINEZ_MAX_SIZE][LINEZ_MAX_SIZE];
+    for (int r = 0; r < LINEZ_MAX_SIZE; r++)
+        for (int c = 0; c < LINEZ_MAX_SIZE; c++)
+            mark[r][c] = 0;
+    for (int i = 1; i + 1 < path.count; i++)
+        mark[path.row[i]][path.col[i]] = 1;
+    cout << endl << title << endl;
+    cout << "    |";
+    for (int c = 0; c < game.cols; c++)
+        cout << setw(4) << (c + 1);
+    cout << endl;
+    cout << "----+";
+    for (int c = 0; c < game.cols; c++)
+        cout << "----";
+    cout << endl;
+    for (int r = 0; r < game.rows; r++) {
+        cout << char('A' + r) << "   |";
+        for (int c = 0; c < game.cols; c++) {
+            if (mark[r][c]) {
+                cout << setw(4) << '*';
+            }
+            else if (game.board[r][c] == 0) {
+                cout << setw(4) << 0;
+            }
+            else {
+                cct_setcolor(COLOR_BLACK, linez_color_to_fg(game.board[r][c]));
+                cout << setw(4) << game.board[r][c];
                 cct_setcolor();
             }
         }

@@ -261,7 +261,7 @@ static void draw_pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu 
     int row;
     int item_index;
 
-    make_top_line(line, line_step == 1 ? para->title : "", width);
+    make_top_line(line, para->title, width);
     print_at(para->start_x, para->start_y, line, para->bg_color, para->fg_color);
 
     for (row = 0; row < item_rows; ++row) {
@@ -310,9 +310,11 @@ int pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu *para)
     count = menu_item_count(menu);
     item_rows = adjusted_high(para);
 
+    cct_setcursor(CCT_CURSOR_INVISIBLE);
     draw_pop_menu(menu, para, count, top, selected);
     if (count <= 0) {
         cct_setcolor();
+        cct_setcursor(CCT_CURSOR_VISIBLE_NORMAL);
         return 0;
     }
 
@@ -321,10 +323,12 @@ int pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu *para)
 
         if (key == KEY_ENTER) {
             cct_setcolor();
+            cct_setcursor(CCT_CURSOR_VISIBLE_NORMAL);
             return selected + 1;
         }
         if (key == KEY_ESC) {
             cct_setcolor();
+            cct_setcursor(CCT_CURSOR_VISIBLE_NORMAL);
             return 0;
         }
         if (key == KEY_PREFIX_1 || key == KEY_PREFIX_2) {

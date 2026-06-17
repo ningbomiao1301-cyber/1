@@ -4,18 +4,18 @@
 void linez_graph_setup(void)
 {
     cct_setfontsize("SimSun-ExtB", 28);
-    cct_setconsoleborder(80, 28, 80, 200);
+    cct_setconsoleborder(120, 35, 120, 200);
     cct_setcursor(CCT_CURSOR_INVISIBLE);
 }
 
-static int cell_center_x(int col)
+static int cell_ball_x(int col)
 {
-    return LINEZ_GRAPH_X + 2 + col * LINEZ_CELL_W;
+    return LINEZ_GRAPH_X + col * LINEZ_CELL_W + 3;
 }
 
-static int cell_center_y(int row)
+static int cell_ball_y(int row)
 {
-    return LINEZ_GRAPH_Y + 1 + row * LINEZ_CELL_H;
+    return LINEZ_GRAPH_Y + row * LINEZ_CELL_H + 1;
 }
 
 static void draw_hline(int x, int y, int cells, int left, int mid, int right)
@@ -23,7 +23,7 @@ static void draw_hline(int x, int y, int cells, int left, int mid, int right)
     cct_showstr(x, y, linez_frame_symbol(left), COLOR_BLACK, COLOR_HWHITE);
     x += 2;
     for (int c = 0; c < cells; c++) {
-        cct_showstr(x, y, linez_frame_symbol(4), COLOR_BLACK, COLOR_HWHITE, 2);
+        cct_showstr(x, y, linez_frame_symbol(4), COLOR_BLACK, COLOR_HWHITE, LINEZ_CELL_W / 2);
         x += LINEZ_CELL_W;
         if (c == cells - 1)
             cct_showstr(x, y, linez_frame_symbol(right), COLOR_BLACK, COLOR_HWHITE);
@@ -56,10 +56,12 @@ static void draw_grid_frame(const LinezGame &game)
         else
             draw_hline(LINEZ_GRAPH_X, y, game.cols, 8, 10, 9);
         if (r < game.rows) {
-            int content_y = y + 1;
-            for (int c = 0; c <= game.cols; c++)
-                cct_showstr(LINEZ_GRAPH_X + c * LINEZ_CELL_W, content_y,
-                            linez_frame_symbol(5), COLOR_BLACK, COLOR_HWHITE);
+            for (int dy = 1; dy < LINEZ_CELL_H; dy++) {
+                int content_y = y + dy;
+                for (int c = 0; c <= game.cols; c++)
+                    cct_showstr(LINEZ_GRAPH_X + c * LINEZ_CELL_W, content_y,
+                                linez_frame_symbol(5), COLOR_BLACK, COLOR_HWHITE);
+            }
         }
     }
 }
@@ -85,21 +87,24 @@ void linez_draw_frame(const LinezGame &game, int with_grid)
 
 void linez_draw_cell(const LinezGame &game, int row, int col, int selected, int with_grid)
 {
-    int x = cell_center_x(col);
-    int y = cell_center_y(row);
+    int x = cell_ball_x(col);
+    int y = cell_ball_y(row);
     int color = game.board[row][col];
     const char *ball = "\xA1\xF0";
     int bg = COLOR_BLACK;
     (void)with_grid;
     if (color != 0) {
         bg = linez_color_to_fg(color);
+        cct_showstr(x - 1, y, "    ", selected ? COLOR_HBLACK : bg, COLOR_HWHITE, 1, 4);
+        cct_showstr(x - 1, y + 1, "    ", selected ? COLOR_HBLACK : bg, COLOR_HWHITE, 1, 4);
         if (selected)
             cct_showstr(x, y, ball, COLOR_HBLACK, COLOR_HWHITE, 1, 2);
         else
             cct_showstr(x, y, ball, bg, COLOR_HWHITE, 1, 2);
         return;
     }
-    cct_showstr(x, y, "  ", COLOR_BLACK, COLOR_WHITE, 1, 2);
+    cct_showstr(x - 1, y, "    ", COLOR_BLACK, COLOR_WHITE, 1, 4);
+    cct_showstr(x - 1, y + 1, "    ", COLOR_BLACK, COLOR_WHITE, 1, 4);
 }
 
 void linez_draw_board(const LinezGame &game, int with_grid)
@@ -146,7 +151,9 @@ void linez_animate_path(const LinezGame &game, const LinezPath &path, int color,
     for (int i = 0; i < path.count; i++) {
         int r = path.row[i];
         int c = path.col[i];
-        cct_showstr(cell_center_x(c), cell_center_y(r), "\xA1\xF0", linez_color_to_fg(color), COLOR_HWHITE, 1, 2);
+        cct_showstr(cell_ball_x(c) - 1, cell_ball_y(r), "    ", linez_color_to_fg(color), COLOR_HWHITE, 1, 4);
+        cct_showstr(cell_ball_x(c) - 1, cell_ball_y(r) + 1, "    ", linez_color_to_fg(color), COLOR_HWHITE, 1, 4);
+        cct_showstr(cell_ball_x(c), cell_ball_y(r), "\xA1\xF0", linez_color_to_fg(color), COLOR_HWHITE, 1, 2);
         cct_delay(80);
         if (i != path.count - 1)
             linez_draw_cell(game, r, c, 0, with_grid);
@@ -157,9 +164,11 @@ int linez_mouse_to_cell(const LinezGame &game, int mx, int my, int &row, int &co
 {
     for (int r = 0; r < game.rows; r++) {
         for (int c = 0; c < game.cols; c++) {
-            int cx = cell_center_x(c);
-            int cy = cell_center_y(r);
-            if (my == cy && mx >= cx && mx <= cx + 1) {
+            int left = LINEZ_GRAPH_X + c * LINEZ_CELL_W + 1;
+            int right = LINEZ_GRAPH_X + (c + 1) * LINEZ_CELL_W - 1;
+            int top = LINEZ_GRAPH_Y + r * LINEZ_CELL_H + 1;
+            int bottom = LINEZ_GRAPH_Y + (r + 1) * LINEZ_CELL_H - 1;
+            if (my >= top && my <= bottom && mx >= left && mx <= right) {
                 row = r;
                 col = c;
                 return 1;

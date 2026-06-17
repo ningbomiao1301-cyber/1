@@ -198,7 +198,7 @@ void linez_menu_d(void)
     linez_graph_setup();
     linez_draw_frame(game, 0);
     linez_draw_board(game, 0);
-    cct_gotoxy(0, 24);
+    cct_gotoxy(0, LINEZ_GRAPH_Y + rows * LINEZ_CELL_H + 2);
     linez_wait_end();
 }
 
@@ -219,7 +219,7 @@ void linez_menu_e(void)
     linez_graph_setup();
     linez_draw_frame(game, 1);
     linez_draw_board(game, 1);
-    cct_gotoxy(0, 24);
+    cct_gotoxy(0, LINEZ_GRAPH_Y + rows * LINEZ_CELL_H + 2);
     linez_wait_end();
 }
 
@@ -286,7 +286,7 @@ void linez_menu_f(void)
     }
     cct_disable_mouse();
     cct_setcursor(CCT_CURSOR_VISIBLE_NORMAL);
-    cct_gotoxy(0, 24);
+    cct_gotoxy(0, LINEZ_GRAPH_Y + rows * LINEZ_CELL_H + 2);
     linez_wait_end();
 }
 

@@ -141,8 +141,8 @@ const int LINEZ_WIN_LENGTH = 5;
 const int LINEZ_MAX_CELLS = LINEZ_MAX_SIZE * LINEZ_MAX_SIZE;
 const int LINEZ_GRAPH_X = 2;
 const int LINEZ_GRAPH_Y = 3;
-const int LINEZ_CELL_W = 4;
-const int LINEZ_CELL_H = 2;
+const int LINEZ_CELL_W = 8;
+const int LINEZ_CELL_H = 3;
 
 struct LinezRandom {
     unsigned int value;

@@ -15,62 +15,7 @@ private:
 	bool round_1;
 	bool round_2;
 
-	void copy_name(const char* name)
-	{
-		int i;
-
-		for (i = 0; i < MAX_NAME_LEN - 1 && name[i] != '\0'; i++) {
-			stu_name[i] = name[i];
-		}
-		stu_name[i] = '\0';
-	}
-
-public:
-	stu_merge()
-	{
-		stu_no = 0;
-		stu_name[0] = '\0';
-		round_1 = false;
-		round_2 = false;
-	}
-
-	void set(int no, const char* name)
-	{
-		stu_no = no;
-		copy_name(name);
-		round_1 = false;
-		round_2 = false;
-	}
-
-	void mark(int round)
-	{
-		if (round == 1) {
-			round_1 = true;
-		}
-		else if (round == 2) {
-			round_2 = true;
-		}
-	}
-
-	int no() const
-	{
-		return stu_no;
-	}
-
-	const char* name() const
-	{
-		return stu_name;
-	}
-
-	bool in_round_1() const
-	{
-		return round_1;
-	}
-
-	bool in_round_2() const
-	{
-		return round_2;
-	}
+	friend class stu_list;
 };
 
 class stu_list {
@@ -84,12 +29,48 @@ private:
 	stu_merge list_merge[MAX_STU_NUM];
 	int list_merge_num;
 
+	void clear_merge(stu_merge& stu)
+	{
+		stu.stu_no = 0;
+		stu.stu_name[0] = '\0';
+		stu.round_1 = false;
+		stu.round_2 = false;
+	}
+
+	void copy_name(stu_merge& dst, const char* name)
+	{
+		int i;
+
+		for (i = 0; i < MAX_NAME_LEN - 1 && name[i] != '\0'; i++) {
+			dst.stu_name[i] = name[i];
+		}
+		dst.stu_name[i] = '\0';
+	}
+
+	void set_merge(stu_merge& dst, const student& src)
+	{
+		dst.stu_no = src.no;
+		copy_name(dst, src.name);
+		dst.round_1 = false;
+		dst.round_2 = false;
+	}
+
+	void mark_merge(stu_merge& stu, int round)
+	{
+		if (round == 1) {
+			stu.round_1 = true;
+		}
+		else if (round == 2) {
+			stu.round_2 = true;
+		}
+	}
+
 	int find_merge(int no) const
 	{
 		int i;
 
 		for (i = 0; i < list_merge_num; i++) {
-			if (list_merge[i].no() == no) {
+			if (list_merge[i].stu_no == no) {
 				return i;
 			}
 		}
@@ -119,12 +100,12 @@ private:
 			if (list_merge_num >= MAX_STU_NUM) {
 				return;
 			}
-			list_merge[list_merge_num].set(stu.no, stu.name);
-			list_merge[list_merge_num].mark(round);
+			set_merge(list_merge[list_merge_num], stu);
+			mark_merge(list_merge[list_merge_num], round);
 			list_merge_num++;
 		}
 		else {
-			list_merge[pos].mark(round);
+			mark_merge(list_merge[pos], round);
 		}
 	}
 
@@ -137,7 +118,7 @@ private:
 		for (i = 0; i < list_merge_num - 1; i++) {
 			min_pos = i;
 			for (j = i + 1; j < list_merge_num; j++) {
-				if (list_merge[j].no() < list_merge[min_pos].no()) {
+				if (list_merge[j].stu_no < list_merge[min_pos].stu_no) {
 					min_pos = j;
 				}
 			}
@@ -156,7 +137,7 @@ private:
 		int len;
 
 		for (i = 0; i < list_merge_num; i++) {
-			len = static_cast<int>(strlen(list_merge[i].name()));
+			len = static_cast<int>(strlen(list_merge[i].stu_name));
 			if (len > max_len) {
 				max_len = len;
 			}
@@ -184,6 +165,7 @@ stu_list::stu_list()
 		list_round_1[i].name[0] = '\0';
 		list_round_2[i].no = 0;
 		list_round_2[i].name[0] = '\0';
+		clear_merge(list_merge[i]);
 	}
 }
 
@@ -255,10 +237,10 @@ int stu_list::print(const char* prompt)
 
 	for (i = 0; i < list_merge_num; i++) {
 		cout << " " << setw(4) << i + 1 << "  "
-			<< setw(7) << list_merge[i].no() << "  "
-			<< setw(6) << (list_merge[i].in_round_1() ? "Y" : "N") << "  "
-			<< setw(6) << (list_merge[i].in_round_2() ? "Y" : "N") << "  "
-			<< setw(name_width) << list_merge[i].name() << " " << endl;
+			<< setw(7) << list_merge[i].stu_no << "  "
+			<< setw(6) << (list_merge[i].round_1 ? "Y" : "N") << "  "
+			<< setw(6) << (list_merge[i].round_2 ? "Y" : "N") << "  "
+			<< setw(name_width) << list_merge[i].stu_name << " " << endl;
 	}
 
 	return 0;

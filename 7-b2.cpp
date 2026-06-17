@@ -116,6 +116,7 @@ static void make_top_line(char dest[], const char title[], const int width)
     static const char horizontal[] = "\xA9\xA4";
     char middle[MAX_LINE_LEN];
     char title_part[MAX_LINE_LEN];
+    int inner_width = width - 4;
     int title_width;
     int title_print_width;
     int title_pos;
@@ -124,25 +125,25 @@ static void make_top_line(char dest[], const char title[], const int width)
 
     append_table_char(dest, &pos, left_top);
 
-    for (i = 0; i < width / 2; ++i) {
+    for (i = 0; i < inner_width / 2; ++i) {
         middle[i * 2] = horizontal[0];
         middle[i * 2 + 1] = horizontal[1];
     }
-    middle[width] = '\0';
+    middle[inner_width] = '\0';
 
     title_width = display_width(title);
     title_print_width = title_width;
     if (title_print_width % 2 != 0)
         ++title_print_width;
-    if (title_print_width > width)
-        title_print_width = width;
+    if (title_print_width > inner_width)
+        title_print_width = inner_width;
 
     make_fit_line(title_part, title, title_print_width);
-    title_pos = (width - title_print_width) / 2;
+    title_pos = (inner_width - title_print_width) / 2;
     for (i = 0; i < title_print_width; ++i)
         middle[title_pos + i] = title_part[i];
 
-    for (i = 0; i < width; ++i) {
+    for (i = 0; i < inner_width; ++i) {
         dest[pos] = middle[i];
         ++pos;
     }
@@ -156,11 +157,12 @@ static void make_bottom_line(char dest[], const int width)
     static const char left_bottom[] = "\xA9\xB8";
     static const char right_bottom[] = "\xA9\xBC";
     static const char horizontal[] = "\xA9\xA4";
+    int inner_width = width - 4;
     int pos = 0;
     int i;
 
     append_table_char(dest, &pos, left_bottom);
-    for (i = 0; i < width / 2; ++i)
+    for (i = 0; i < inner_width / 2; ++i)
         append_table_char(dest, &pos, horizontal);
     append_table_char(dest, &pos, right_bottom);
     dest[pos] = '\0';
@@ -205,13 +207,20 @@ static int adjusted_width(const struct PopMenu *para)
 {
     int width = para->width;
     int title_width = display_width(para->title);
+    int title_total_width;
 
-    if (width < title_width)
-        width = title_width;
     if (width % 2 != 0)
         ++width;
-    if (width < 2)
-        width = 2;
+
+    title_total_width = title_width;
+    if (title_total_width % 2 != 0)
+        ++title_total_width;
+    title_total_width += 4;
+
+    if (width < title_total_width)
+        width = title_total_width;
+    if (width < 6)
+        width = 6;
     if (width > MAX_MENU_WIDTH)
         width = MAX_MENU_WIDTH;
 
@@ -220,10 +229,36 @@ static int adjusted_width(const struct PopMenu *para)
 
 static int adjusted_high(const struct PopMenu *para)
 {
-    if (para->high < 1)
-        return 1;
+    if (para->high < 3)
+        return 3;
 
     return para->high;
+}
+
+static int display_line_step(const int start_x, const int width)
+{
+    int cols;
+    int lines;
+    int buffer_cols;
+    int buffer_lines;
+    int first_line_cols;
+    int rest_cols;
+    int step = 1;
+
+    cct_getconsoleborder(cols, lines, buffer_cols, buffer_lines);
+    if (buffer_cols <= 0)
+        return 1;
+
+    first_line_cols = buffer_cols - start_x;
+    if (first_line_cols <= 0)
+        first_line_cols = buffer_cols;
+
+    if (width > first_line_cols) {
+        rest_cols = width - first_line_cols;
+        step += (rest_cols + buffer_cols - 1) / buffer_cols;
+    }
+
+    return step;
 }
 
 static void draw_pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu *para, const int count, const int top, const int selected)
@@ -231,25 +266,27 @@ static void draw_pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu 
     char line[MAX_LINE_LEN];
     char content[MAX_LINE_LEN];
     int width = adjusted_width(para);
-    int high = adjusted_high(para);
+    int item_width = width - 4;
+    int item_rows = adjusted_high(para) - 2;
+    int line_step = display_line_step(para->start_x, width);
     int row;
     int item_index;
 
-    make_top_line(line, para->title, width);
+    make_top_line(line, line_step == 1 ? para->title : "", width);
     print_at(para->start_x, para->start_y, line, para->bg_color, para->fg_color);
 
-    for (row = 0; row < high; ++row) {
+    for (row = 0; row < item_rows; ++row) {
         item_index = top + row;
         if (item_index < count)
-            make_fit_line(content, menu[item_index], width);
+            make_fit_line(content, menu[item_index], item_width);
         else
-            make_fit_line(content, "", width);
+            make_fit_line(content, "", item_width);
 
-        print_menu_row(para->start_x, para->start_y + row + 1, content, item_index == selected, para);
+        print_menu_row(para->start_x, para->start_y + (row + 1) * line_step, content, item_index == selected, para);
     }
 
     make_bottom_line(line, width);
-    print_at(para->start_x, para->start_y + high + 1, line, para->bg_color, para->fg_color);
+    print_at(para->start_x, para->start_y + (item_rows + 1) * line_step, line, para->bg_color, para->fg_color);
 }
 
 static void keep_selected_visible(int *top, const int selected, const int high)
@@ -273,7 +310,7 @@ static void keep_selected_visible(int *top, const int selected, const int high)
 int pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu *para)
 {
     int count;
-    int high;
+    int item_rows;
     int selected = 0;
     int top = 0;
     int key;
@@ -282,7 +319,7 @@ int pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu *para)
         return 0;
 
     count = menu_item_count(menu);
-    high = adjusted_high(para);
+    item_rows = adjusted_high(para) - 2;
 
     draw_pop_menu(menu, para, count, top, selected);
     if (count <= 0) {
@@ -324,12 +361,12 @@ int pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu *para)
                     selected = count - 1;
                     break;
                 case KEY_PAGE_UP:
-                    selected -= high;
+                    selected -= item_rows;
                     if (selected < 0)
                         selected = 0;
                     break;
                 case KEY_PAGE_DOWN:
-                    selected += high;
+                    selected += item_rows;
                     if (selected >= count)
                         selected = count - 1;
                     break;
@@ -337,7 +374,7 @@ int pop_menu(const char menu[][MAX_ITEM_LEN], const struct PopMenu *para)
                     break;
             }
 
-            keep_selected_visible(&top, selected, high);
+            keep_selected_visible(&top, selected, item_rows);
             draw_pop_menu(menu, para, count, top, selected);
         }
     }

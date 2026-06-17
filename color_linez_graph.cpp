@@ -73,7 +73,7 @@ void linez_draw_frame(const LinezGame &game, int with_grid)
     cct_cls();
     cct_getconsoleborder(cols, lines, buffer_cols, buffer_lines);
     cct_showstr(0, 0, "彩球游戏", COLOR_BLACK, COLOR_HYELLOW);
-    cct_showstr(14, 0, "屏幕:", COLOR_BLACK, COLOR_HWHITE);
+    cct_showstr(14, 0, "屏幕：", COLOR_BLACK, COLOR_HWHITE);
     cct_showint(22, 0, lines, COLOR_BLACK, COLOR_HWHITE);
     cct_showstr(25, 0, "行", COLOR_BLACK, COLOR_HWHITE);
     cct_showint(29, 0, cols, COLOR_BLACK, COLOR_HWHITE);
@@ -110,10 +110,10 @@ void linez_draw_status(const LinezGame &game)
 {
     int x = LINEZ_GRAPH_X + game.cols * LINEZ_CELL_W + 8;
     int y = LINEZ_GRAPH_Y;
-    cct_showstr(x, y, "得分:", COLOR_BLACK, COLOR_HYELLOW, 1, 20);
+    cct_showstr(x, y, "得分：", COLOR_BLACK, COLOR_HYELLOW, 1, 20);
     cct_showint(x + 8, y, game.score, COLOR_BLACK, COLOR_HYELLOW);
     y += 2;
-    cct_showstr(x, y, "预告:", COLOR_BLACK, COLOR_HWHITE, 1, 20);
+    cct_showstr(x, y, "预告：", COLOR_BLACK, COLOR_HWHITE, 1, 20);
     if (game.preview) {
         for (int i = 0; i < LINEZ_NEXT_BALLS; i++)
             cct_showstr(x + i * 4, y + 1, "()", COLOR_BLACK, linez_color_to_fg(game.next_colors[i]), 1, 2);
@@ -122,7 +122,7 @@ void linez_draw_status(const LinezGame &game)
         cct_showstr(x, y + 1, "关闭      ", COLOR_BLACK, COLOR_HBLACK);
     }
     y += 4;
-    cct_showstr(x, y, "统计:", COLOR_BLACK, COLOR_HWHITE, 1, 20);
+    cct_showstr(x, y, "统计：", COLOR_BLACK, COLOR_HWHITE, 1, 20);
     if (game.stats) {
         for (int i = 1; i <= LINEZ_COLOR_COUNT; i++) {
             cct_showstr(x, y + i, linez_color_name(i), COLOR_BLACK, linez_color_to_fg(i), 1, 8);

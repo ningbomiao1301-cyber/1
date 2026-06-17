@@ -101,7 +101,7 @@ void linez_pause(const char *prompt)
     cct_setcolor();
     if (prompt != NULL)
         cout << prompt;
-    cout << " 请按回车键继续...";
+    cout << " 请按回车键继续……";
     while (_getch() != '\r')
         ;
     cout << endl;
@@ -110,7 +110,7 @@ void linez_pause(const char *prompt)
 void linez_wait_end(void)
 {
     char word[32];
-    cout << endl << "请输入 End 返回菜单: ";
+    cout << endl << "请输入End返回菜单：";
     do {
         cin >> setw(31) >> word;
     } while (strcmp(word, "End") != 0);
@@ -118,7 +118,7 @@ void linez_wait_end(void)
 
 int linez_input_size(int &rows, int &cols)
 {
-    cout << "请输入行数和列数(7-9): ";
+    cout << "请输入行数和列数，范围为7到9：";
     cin >> rows >> cols;
     if (!cin) {
         cin.clear();
@@ -146,7 +146,7 @@ int linez_read_position(const char *prompt, int rows, int cols, int &row, int &c
 {
     char row_ch;
     int col_no;
-    cout << prompt << "（行 A-I，列 1-9）: ";
+    cout << "请输入" << prompt << "，行用A到I表示，列用1到9表示：";
     cin >> row_ch >> col_no;
     if (!cin) {
         cin.clear();
@@ -166,14 +166,14 @@ int linez_read_position_or_quit(const char *prompt, int rows, int cols, int &row
 {
     char row_ch;
     int col_no;
-    cout << prompt << "（输入 Q 0 退出）: ";
+    cout << "请输入" << prompt << "，行用A到I表示，列用1到9表示；输入0 0返回菜单：";
     cin >> row_ch >> col_no;
     if (!cin) {
         cin.clear();
         cin.ignore(1024, '\n');
         return -1;
     }
-    if (row_ch == 'Q' || row_ch == 'q')
+    if (row_ch == '0' || row_ch == 'Q' || row_ch == 'q')
         return 0;
     row = parse_row_char(row_ch);
     col = col_no - 1;
@@ -219,7 +219,7 @@ void linez_print_path(const LinezPath &path)
         cout << "没有可达路径。" << endl;
         return;
     }
-    cout << "路径: ";
+    cout << "路径：";
     for (int i = 0; i < path.count; i++) {
         linez_print_coord(path.row[i], path.col[i]);
         if (i != path.count - 1)

@@ -12,9 +12,9 @@ static int ask_size_or_return(int &rows, int &cols)
 {
     while (!linez_input_size(rows, cols)) {
         char again[8];
-        cout << "是否重新输入？输入 Y 继续，其他返回: ";
+        cout << "输入错误，是否重新输入？输入1重新输入，输入其它字符返回菜单：";
         cin >> setw(7) >> again;
-        if (again[0] != 'Y' && again[0] != 'y')
+        if (again[0] != '1' && again[0] != 'Y' && again[0] != 'y')
             return 0;
     }
     return 1;
@@ -28,7 +28,7 @@ void linez_menu_a(void)
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
-    cout << endl << "初始五个彩球:" << endl;
+    cout << endl << "在规定范围内随机生成五个彩球的位置，内部数组如下：" << endl;
     linez_print_board(game);
     linez_wait_end();
 }
@@ -48,8 +48,8 @@ void linez_menu_b(void)
     make_game(game, rows, cols);
     linez_fill_percent(game, 60);
     linez_print_board(game);
-    if (!linez_read_position("起点", rows, cols, sr, sc) ||
-        !linez_read_position("终点", rows, cols, dr, dc)) {
+    if (!linez_read_position("起始坐标", rows, cols, sr, sc) ||
+        !linez_read_position("目的坐标", rows, cols, dr, dc)) {
         linez_wait_end();
         return;
     }
@@ -87,14 +87,14 @@ void linez_menu_c(void)
         int dr;
         int dc;
         LinezPath path;
-        cout << endl << "当前得分: " << game.score << endl;
+        cout << endl << "当前得分：" << game.score << endl;
         linez_print_board(game);
-        int ret = linez_read_position_or_quit("起点", rows, cols, sr, sc);
+        int ret = linez_read_position_or_quit("起始坐标", rows, cols, sr, sc);
         if (ret == 0)
             break;
         if (ret < 0)
             continue;
-        ret = linez_read_position_or_quit("终点", rows, cols, dr, dc);
+        ret = linez_read_position_or_quit("目的坐标", rows, cols, dr, dc);
         if (ret == 0)
             break;
         if (ret < 0)
@@ -107,7 +107,7 @@ void linez_menu_c(void)
         after_successful_move(game);
     }
     if (linez_is_game_over(game))
-        cout << "游戏结束。最终得分: " << game.score << endl;
+        cout << "游戏结束。最终得分：" << game.score << endl;
     linez_wait_end();
 }
 
@@ -264,7 +264,7 @@ void linez_menu_g(void)
     cct_disable_mouse();
     cct_setcursor(CCT_CURSOR_VISIBLE_NORMAL);
     cct_cls();
-    cout << "游戏结束或已退出。得分: " << game.score << endl;
+    cout << "游戏结束或已退出。得分：" << game.score << endl;
     linez_wait_end();
 }
 
@@ -272,16 +272,16 @@ static void show_menu(void)
 {
     cct_setcolor();
     cout << endl;
-    cout << "================ 彩球游戏 ================" << endl;
-    cout << "A. 随机生成五个彩球并打印内部数组" << endl;
-    cout << "B. 生成百分之六十的彩球并查找路径" << endl;
-    cout << "C. 内部数组方式的完整游戏" << endl;
-    cout << "D. 伪图形界面框架（无分隔线）" << endl;
-    cout << "E. 伪图形界面框架（有分隔线）" << endl;
-    cout << "F. 伪图形界面生成百分之六十彩球并移动一次" << endl;
-    cout << "G. 伪图形界面完整游戏" << endl;
-    cout << "Q. 退出" << endl;
-    cout << "请选择: ";
+    cout << "================ 综合题2：彩球游戏 ================" << endl;
+    cout << "菜单项A：输入行列后，在规定范围内随机生成五个球的位置，然后打印整个内部数组" << endl;
+    cout << "菜单项B：输入行列后，在规定范围内随机生成百分之六十的球的位置，输入起始坐标及目的坐标，找出移动路径" << endl;
+    cout << "菜单项C：结合菜单项A和菜单项B，完成一个完整的实现过程（纯内部数组表现形式）" << endl;
+    cout << "菜单项D：在命令行伪图形界面上画出框架（无分隔线）及初始的五个球" << endl;
+    cout << "菜单项E：在命令行伪图形界面上画出框架（有分隔线）及初始的五个球" << endl;
+    cout << "菜单项F：在命令行伪图形界面上显示百分之六十的球，用鼠标选择要移动的球及目的位置，完成一个移动" << endl;
+    cout << "菜单项G：在命令行伪图形界面上实现完整版的游戏" << endl;
+    cout << "输入0退出" << endl;
+    cout << "请选择菜单项：";
 }
 
 void linez_run_menu(void)
@@ -291,6 +291,8 @@ void linez_run_menu(void)
         show_menu();
         cin >> choice;
         choice = char(toupper((unsigned char)choice));
+        if (choice == '0')
+            choice = 'Q';
         switch (choice) {
             case 'A':
                 linez_menu_a();

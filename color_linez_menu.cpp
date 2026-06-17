@@ -195,6 +195,8 @@ void linez_menu_f(void)
     }
     cct_disable_mouse();
     cct_setcursor(CCT_CURSOR_VISIBLE_NORMAL);
+    cct_gotoxy(0, 24);
+    linez_wait_end();
 }
 
 static void graph_turn_after_move(LinezGame &game)
@@ -274,6 +276,7 @@ static void show_menu(void)
 {
     cct_cls();
     cct_setcolor(COLOR_BLACK, COLOR_WHITE);
+    cout << "------------------------------------------------" << endl;
     cout << "A.内部数组，随机生成初始5个球" << endl;
     cout << "B.内部数组，随机生成60%的球，寻找移动路径" << endl;
     cout << "C.内部数组，完整版" << endl;

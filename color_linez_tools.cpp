@@ -107,24 +107,32 @@ void linez_pause(const char *prompt)
 void linez_wait_end(void)
 {
     char word[32];
-    cout << endl << "请输入End返回菜单：";
+    cout << endl << "请输入END返回菜单：";
     do {
         cin >> setw(31) >> word;
-    } while (strcmp(word, "End") != 0);
+    } while (strcmp(word, "END") != 0);
 }
 
 int linez_input_size(int &rows, int &cols)
 {
-    cout << "请输入行列（7-9）：";
-    cin >> rows >> cols;
+    cout << "请输入行数（7-9）：";
+    cin >> rows;
     if (!cin) {
         cin.clear();
         cin.ignore(1024, '\n');
-        cout << "行列输入错误。" << endl;
+        cout << "行数输入错误。" << endl;
+        return 0;
+    }
+    cout << "请输入列数（7-9）：";
+    cin >> cols;
+    if (!cin) {
+        cin.clear();
+        cin.ignore(1024, '\n');
+        cout << "列数输入错误。" << endl;
         return 0;
     }
     if (rows < LINEZ_MIN_SIZE || rows > LINEZ_MAX_SIZE || cols < LINEZ_MIN_SIZE || cols > LINEZ_MAX_SIZE) {
-        cout << "行列值必须在7-9之间。" << endl;
+        cout << "行数和列数必须在7-9之间。" << endl;
         return 0;
     }
     return 1;
@@ -163,14 +171,14 @@ int linez_read_position_or_quit(const char *prompt, int rows, int cols, int &row
 {
     char row_token[32];
     int col_no;
-    cout << "请输入" << prompt << "，行用A到I表示，列用1到9表示；输入End返回菜单：";
+    cout << "请输入" << prompt << "，行用A到I表示，列用1到9表示；输入END返回菜单：";
     cin >> setw(31) >> row_token;
     if (!cin) {
         cin.clear();
         cin.ignore(1024, '\n');
         return -1;
     }
-    if (strcmp(row_token, "End") == 0)
+    if (strcmp(row_token, "END") == 0)
         return 0;
     cin >> col_no;
     if (!cin) {

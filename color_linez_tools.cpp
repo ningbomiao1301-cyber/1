@@ -107,15 +107,15 @@ void linez_pause(const char *prompt)
 void linez_wait_end(void)
 {
     char word[32];
-    cout << endl << "本小题结束，请输入END继续...";
+    cout << endl << "本小题结束，请输入End继续...";
     do {
         cin >> setw(31) >> word;
-    } while (strcmp(word, "END") != 0);
+    } while (strcmp(word, "End") != 0 && strcmp(word, "END") != 0);
 }
 
 int linez_input_size(int &rows, int &cols)
 {
-    cout << "请输入行数（7-9）：";
+    cout << "请输入行数(7-9):" << endl;
     cin >> rows;
     if (!cin) {
         cin.clear();
@@ -123,7 +123,7 @@ int linez_input_size(int &rows, int &cols)
         cout << "行数输入错误。" << endl;
         return 0;
     }
-    cout << "请输入列数（7-9）：";
+    cout << "请输入列数(7-9):" << endl;
     cin >> cols;
     if (!cin) {
         cin.clear();
@@ -147,19 +147,49 @@ static int parse_row_char(char ch)
     return ch - 'A';
 }
 
+static int parse_position_token(const char *token, int rows, int cols, int &row, int &col)
+{
+    int i = 1;
+    int value = 0;
+    if (token == NULL || token[0] == '\0')
+        return 0;
+    row = parse_row_char(token[0]);
+    if (row < 0 || row >= rows)
+        return 0;
+    if (token[1] == '\0')
+        return 2;
+    while (token[i] != '\0') {
+        if (token[i] < '0' || token[i] > '9')
+            return 0;
+        value = value * 10 + token[i] - '0';
+        i++;
+    }
+    col = value - 1;
+    return col >= 0 && col < cols;
+}
+
 int linez_read_position(const char *prompt, int rows, int cols, int &row, int &col)
 {
-    char row_ch;
+    char token[32];
     int col_no;
+    int parsed;
     cout << prompt;
-    cin >> row_ch >> col_no;
+    cin >> setw(31) >> token;
     if (!cin) {
         cin.clear();
         cin.ignore(1024, '\n');
         return 0;
     }
-    row = parse_row_char(row_ch);
-    col = col_no - 1;
+    parsed = parse_position_token(token, rows, cols, row, col);
+    if (parsed == 2) {
+        cin >> col_no;
+        if (!cin) {
+            cin.clear();
+            cin.ignore(1024, '\n');
+            return 0;
+        }
+        col = col_no - 1;
+    }
     if (row < 0 || row >= rows || col < 0 || col >= cols) {
         cout << "坐标超出棋盘范围。" << endl;
         return 0;
@@ -171,6 +201,7 @@ int linez_read_position_or_quit(const char *prompt, int rows, int cols, int &row
 {
     char row_token[32];
     int col_no;
+    int parsed;
     cout << prompt;
     cin >> setw(31) >> row_token;
     if (!cin) {
@@ -178,19 +209,21 @@ int linez_read_position_or_quit(const char *prompt, int rows, int cols, int &row
         cin.ignore(1024, '\n');
         return -1;
     }
-    if (strcmp(row_token, "END") == 0)
+    if (strcmp(row_token, "End") == 0 || strcmp(row_token, "END") == 0)
         return 0;
-    cin >> col_no;
-    if (!cin) {
-        cin.clear();
-        cin.ignore(1024, '\n');
+    parsed = parse_position_token(row_token, rows, cols, row, col);
+    if (parsed == 2) {
+        cin >> col_no;
+        if (!cin) {
+            cin.clear();
+            cin.ignore(1024, '\n');
+            return -1;
+        }
+        col = col_no - 1;
+    }
+    else if (!parsed) {
         return -1;
     }
-    if (row_token[1] != '\0')
-        return -1;
-    char row_ch = row_token[0];
-    row = parse_row_char(row_ch);
-    col = col_no - 1;
     if (row < 0 || row >= rows || col < 0 || col >= cols) {
         cout << "坐标超出棋盘范围。" << endl;
         return -1;
@@ -214,7 +247,7 @@ void linez_print_board(const LinezGame &game)
         cout << "----";
     cout << endl;
     for (int r = 0; r < game.rows; r++) {
-        cout << char('A' + r) << "   |";
+        cout << char('A' + r) << "  |";
         for (int c = 0; c < game.cols; c++) {
             if (game.board[r][c] == 0) {
                 cct_setcolor();
@@ -249,7 +282,7 @@ void linez_print_board_with_path(const LinezGame &game, const LinezPath &path, c
         cout << "----";
     cout << endl;
     for (int r = 0; r < game.rows; r++) {
-        cout << char('A' + r) << "   |";
+        cout << char('A' + r) << "  |";
         for (int c = 0; c < game.cols; c++) {
             if (mark[r][c]) {
                 cout << setw(4) << '*';

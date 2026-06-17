@@ -82,6 +82,7 @@ void linez_menu_a(void)
     LinezGame game;
     int rows;
     int cols;
+    cct_cls();
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
@@ -100,6 +101,7 @@ void linez_menu_b(void)
     int sc;
     int dr;
     int dc;
+    cct_cls();
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
@@ -141,6 +143,7 @@ void linez_menu_c(void)
     LinezGame game;
     int rows;
     int cols;
+    cct_cls();
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
@@ -182,6 +185,7 @@ void linez_menu_d(void)
     LinezGame game;
     int rows;
     int cols;
+    cct_cls();
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
@@ -202,6 +206,7 @@ void linez_menu_e(void)
     LinezGame game;
     int rows;
     int cols;
+    cct_cls();
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
@@ -243,6 +248,7 @@ void linez_menu_f(void)
     int dc;
     int key;
     LinezPath path;
+    cct_cls();
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
@@ -309,6 +315,7 @@ void linez_menu_g(void)
     int cols;
     int selected_r = -1;
     int selected_c = -1;
+    cct_cls();
     if (!ask_size_or_return(rows, cols))
         return;
     make_game(game, rows, cols);
@@ -371,6 +378,7 @@ static void show_menu(void)
     cout << "Q.退出" << endl;
     cout << "------------------------------------------------" << endl;
     cout << "[请选择:] ";
+    cout.flush();
 }
 
 void linez_run_menu(void)

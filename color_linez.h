@@ -13,6 +13,8 @@
 #include <Windows.h>
 #include "cmd_console_tools.h"
 #else
+#include <termios.h>
+#include <unistd.h>
 #define COLOR_BLACK     0
 #define COLOR_BLUE      1
 #define COLOR_GREEN     2
@@ -111,7 +113,19 @@ inline int cct_read_keyboard_and_mouse(int &MX, int &MY, int &MAction, int &keyc
 }
 inline int _getch(void)
 {
-    int ch = std::getchar();
+    if (!isatty(STDIN_FILENO)) {
+        int ch = std::getchar();
+        return (ch == '\n') ? '\r' : ch;
+    }
+    termios old_term;
+    termios new_term;
+    int ch;
+    tcgetattr(STDIN_FILENO, &old_term);
+    new_term = old_term;
+    new_term.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
+    ch = std::getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &old_term);
     return (ch == '\n') ? '\r' : ch;
 }
 #endif

@@ -72,12 +72,11 @@ void linez_draw_frame(const LinezGame &game, int with_grid)
     int buffer_lines;
     cct_cls();
     cct_getconsoleborder(cols, lines, buffer_cols, buffer_lines);
-    cct_showstr(0, 0, "彩球游戏", COLOR_BLACK, COLOR_HYELLOW);
-    cct_showstr(14, 0, "屏幕：", COLOR_BLACK, COLOR_HWHITE);
-    cct_showint(22, 0, lines, COLOR_BLACK, COLOR_HWHITE);
-    cct_showstr(25, 0, "行", COLOR_BLACK, COLOR_HWHITE);
-    cct_showint(29, 0, cols, COLOR_BLACK, COLOR_HWHITE);
-    cct_showstr(32, 0, "列", COLOR_BLACK, COLOR_HWHITE);
+    cct_showstr(0, 0, "屏幕:", COLOR_BLACK, COLOR_HWHITE);
+    cct_showint(8, 0, lines, COLOR_BLACK, COLOR_HWHITE);
+    cct_showstr(12, 0, "行", COLOR_BLACK, COLOR_HWHITE);
+    cct_showint(15, 0, cols, COLOR_BLACK, COLOR_HWHITE);
+    cct_showstr(19, 0, "列", COLOR_BLACK, COLOR_HWHITE);
     if (with_grid)
         draw_grid_frame(game);
     else
@@ -194,6 +193,9 @@ int linez_get_graphical_selection(const LinezGame &game, int &row, int &col, int
                     col = c;
                     return 1;
                 }
+            }
+            else {
+                linez_show_message(0, LINEZ_GRAPH_Y + game.rows * LINEZ_CELL_H + 2, "[当前光标] 位置非法");
             }
             if (action == MOUSE_RIGHT_BUTTON_CLICK)
                 return 0;

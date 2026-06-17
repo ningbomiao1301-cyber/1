@@ -238,16 +238,16 @@ void linez_print_coord(int row, int col)
 
 void linez_print_board(const LinezGame &game)
 {
-    cout << " |";
+    cout << "   |";
     for (int c = 0; c < game.cols; c++)
         cout << setw(5) << (c + 1);
     cout << endl;
-    cout << "-+";
+    cout << "---+";
     for (int c = 0; c < game.cols; c++)
         cout << "-----";
     cout << endl;
     for (int r = 0; r < game.rows; r++) {
-        cout << char('A' + r) << "|";
+        cout << char('A' + r) << "  |";
         for (int c = 0; c < game.cols; c++) {
             if (game.board[r][c] == 0) {
                 cct_setcolor();
@@ -273,16 +273,16 @@ void linez_print_board_with_path(const LinezGame &game, const LinezPath &path, c
     for (int i = 1; i + 1 < path.count; i++)
         mark[path.row[i]][path.col[i]] = 1;
     cout << endl << title << endl;
-    cout << " |";
+    cout << "   |";
     for (int c = 0; c < game.cols; c++)
         cout << setw(5) << (c + 1);
     cout << endl;
-    cout << "-+";
+    cout << "---+";
     for (int c = 0; c < game.cols; c++)
         cout << "-----";
     cout << endl;
     for (int r = 0; r < game.rows; r++) {
-        cout << char('A' + r) << "|";
+        cout << char('A' + r) << "  |";
         for (int c = 0; c < game.cols; c++) {
             if (mark[r][c]) {
                 cout << setw(5) << '*';

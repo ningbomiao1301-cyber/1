@@ -122,7 +122,8 @@ void linez_menu_d(void)
     linez_graph_setup();
     linez_draw_frame(game, 0);
     linez_draw_board(game, 0);
-    linez_pause("");
+    cct_gotoxy(0, 24);
+    linez_wait_end();
 }
 
 void linez_menu_e(void)
@@ -136,7 +137,8 @@ void linez_menu_e(void)
     linez_graph_setup();
     linez_draw_frame(game, 1);
     linez_draw_board(game, 1);
-    linez_pause("");
+    cct_gotoxy(0, 24);
+    linez_wait_end();
 }
 
 static void redraw_graph_game(const LinezGame &game)

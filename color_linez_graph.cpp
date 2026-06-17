@@ -88,14 +88,18 @@ void linez_draw_cell(const LinezGame &game, int row, int col, int selected, int 
     int x = cell_center_x(col);
     int y = cell_center_y(row);
     int color = game.board[row][col];
-    const char *text = "  ";
-    int fg = COLOR_WHITE;
+    const char *ball = "\xA1\xF0";
+    int bg = COLOR_BLACK;
     (void)with_grid;
     if (color != 0) {
-        text = selected ? "<>" : "()";
-        fg = linez_color_to_fg(color);
+        bg = linez_color_to_fg(color);
+        if (selected)
+            cct_showstr(x, y, ball, COLOR_HBLACK, COLOR_HWHITE, 1, 2);
+        else
+            cct_showstr(x, y, ball, bg, COLOR_HWHITE, 1, 2);
+        return;
     }
-    cct_showstr(x, y, text, selected ? COLOR_HBLACK : COLOR_BLACK, fg, 1, 2);
+    cct_showstr(x, y, "  ", COLOR_BLACK, COLOR_WHITE, 1, 2);
 }
 
 void linez_draw_board(const LinezGame &game, int with_grid)
@@ -115,7 +119,7 @@ void linez_draw_status(const LinezGame &game)
     cct_showstr(x, y, "预告：", COLOR_BLACK, COLOR_HWHITE, 1, 20);
     if (game.preview) {
         for (int i = 0; i < LINEZ_NEXT_BALLS; i++)
-            cct_showstr(x + i * 4, y + 1, "()", COLOR_BLACK, linez_color_to_fg(game.next_colors[i]), 1, 2);
+            cct_showstr(x + i * 4, y + 1, "\xA1\xF0", linez_color_to_fg(game.next_colors[i]), COLOR_HWHITE, 1, 2);
     }
     else {
         cct_showstr(x, y + 1, "关闭      ", COLOR_BLACK, COLOR_HBLACK);
@@ -142,7 +146,7 @@ void linez_animate_path(const LinezGame &game, const LinezPath &path, int color,
     for (int i = 0; i < path.count; i++) {
         int r = path.row[i];
         int c = path.col[i];
-        cct_showstr(cell_center_x(c), cell_center_y(r), "[]", COLOR_BLACK, linez_color_to_fg(color), 1, 2);
+        cct_showstr(cell_center_x(c), cell_center_y(r), "\xA1\xF0", linez_color_to_fg(color), COLOR_HWHITE, 1, 2);
         cct_delay(80);
         if (i != path.count - 1)
             linez_draw_cell(game, r, c, 0, with_grid);

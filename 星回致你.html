@@ -693,6 +693,183 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ═══ 存档 Modal ═══ */
+.archive-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 20px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 3px;
+}
+.arch-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  padding: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+}
+.arch-tab.active {
+  background: var(--bg-mid);
+  color: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(91,200,245,0.1);
+}
+.arch-tab-panel { display: none; }
+.arch-tab-panel.active { display: block; }
+
+/* 存档槽位 */
+.slot-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.slot-grid::-webkit-scrollbar { width: 2px; }
+.slot-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.slot-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  transition: border-color 0.2s;
+}
+.slot-card:hover { border-color: rgba(91,200,245,0.3); }
+.slot-card.empty { opacity: 0.5; }
+.slot-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.slot-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(91,200,245,0.1);
+  border: 1px solid var(--border);
+  color: var(--accent-blue);
+  font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.slot-name-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  min-width: 0;
+}
+.slot-name-input::placeholder { color: var(--text-muted); }
+.slot-meta {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  display: flex;
+  gap: 12px;
+}
+.slot-actions {
+  display: flex;
+  gap: 6px;
+}
+.slot-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  padding: 6px 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: inherit;
+  transition: all 0.18s;
+}
+.slot-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+.slot-btn.primary {
+  background: linear-gradient(135deg, #1565c0, #4fc3f7);
+  border-color: transparent;
+  color: white;
+}
+.slot-btn.primary:hover { box-shadow: 0 0 10px rgba(79,195,247,0.3); }
+.slot-btn.danger:hover { border-color: rgba(239,154,154,0.5); color: rgba(239,154,154,0.8); }
+
+/* 文件操作区 */
+.file-ops {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.file-op-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+.file-op-card h4 {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.file-op-card p {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+.file-op-btns {
+  display: flex;
+  gap: 8px;
+}
+.btn-file {
+  flex: 1;
+  background: linear-gradient(135deg, #1a4a8a, #2d6ab0);
+  border: none;
+  border-radius: 8px;
+  color: var(--accent-blue);
+  padding: 9px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+  transition: box-shadow 0.2s;
+}
+.btn-file:hover { box-shadow: 0 0 12px rgba(91,200,245,0.2); }
+.btn-file.export { background: linear-gradient(135deg, #1565c0, #4fc3f7); color: white; }
+#fileImportInput { display: none; }
+
+/* 存档通知Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  border-radius: 30px;
+  padding: 10px 22px;
+  font-size: 13px;
+  color: var(--accent-blue);
+  z-index: 300;
+  opacity: 0;
+  transition: all 0.3s;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* 响应式适配 */
 @media (max-width: 768px) {
   .sidebar { display: none; }
@@ -705,6 +882,52 @@ body {
 <!-- 星空背景 -->
 <canvas id="canvas-bg"></canvas>
 <div class="top-glow"></div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast"></div>
+
+<!-- 存档 Modal -->
+<div class="modal-bg" id="archiveBg">
+  <div class="modal" style="width:520px">
+    <h2>📖 存档管理</h2>
+    <div class="archive-tabs">
+      <button class="arch-tab active" onclick="switchArchTab('local',this)">本地存档</button>
+      <button class="arch-tab" onclick="switchArchTab('file',this)">文件导入 / 导出</button>
+    </div>
+
+    <!-- 本地槽位 -->
+    <div class="arch-tab-panel active" id="tabLocal">
+      <div class="slot-grid" id="slotGrid">
+        <!-- 由 JS 渲染 -->
+      </div>
+    </div>
+
+    <!-- 文件操作 -->
+    <div class="arch-tab-panel" id="tabFile">
+      <div class="file-ops">
+        <div class="file-op-card">
+          <h4>✦ 导出存档到文件</h4>
+          <p>将当前聊天记录、记忆碎片、羁绊值打包为 <code style="color:var(--accent-blue)">.json</code> 文件下载到本地。在其他设备上用「导入」功能还原。</p>
+          <div class="file-op-btns">
+            <button class="btn-file export" onclick="exportToFile()">⬇ 导出当前存档</button>
+          </div>
+        </div>
+        <div class="file-op-card">
+          <h4>✦ 从文件导入存档</h4>
+          <p>选择之前导出的 <code style="color:var(--accent-blue)">.json</code> 存档文件，恢复聊天记录和所有设置。<br><strong style="color:rgba(239,154,154,0.8)">注意：</strong>导入会替换当前对话内容。</p>
+          <div class="file-op-btns">
+            <button class="btn-file" onclick="document.getElementById('fileImportInput').click()">⬆ 选择存档文件</button>
+          </div>
+          <input type="file" id="fileImportInput" accept=".json" onchange="importFromFile(this)">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeArchive()">关闭</button>
+    </div>
+  </div>
+</div>
 
 <!-- 设置 Modal -->
 <div class="modal-bg" id="modalBg">
@@ -806,6 +1029,7 @@ body {
       </div>
     </div>
 
+    <button class="btn-settings" onclick="openArchive()" style="margin-top:6px">📖 &nbsp;存档管理</button>
     <button class="btn-settings" onclick="openModal()">⚙ &nbsp;AI 设置 / API Key</button>
   </aside>
 
@@ -821,6 +1045,14 @@ body {
       <div class="h-status">
         <div class="dot-online"></div>在线
       </div>
+      <button onclick="openArchive()" title="存档管理" style="
+        background:none;border:1px solid var(--border);border-radius:8px;
+        color:var(--text-secondary);padding:5px 10px;cursor:pointer;font-size:12px;
+        margin-left:10px;transition:all 0.2s;font-family:inherit;
+      " onmouseover="this.style.borderColor='var(--accent-blue)';this.style.color='var(--accent-blue)'"
+         onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+        📖 存档
+      </button>
     </div>
 
     <!-- 消息列表 -->
@@ -952,44 +1184,74 @@ body {
 /* ════════════════════════════════════
    ✦ 状态 & 存储
 ════════════════════════════════════ */
-const LS_KEY = 'sxh_v2';
+const LS_KEY     = 'sxh_v2';
+const LS_SLOTS   = 'sxh_slots';   // 存档槽
+const SLOT_COUNT = 5;
+
 let cfg = {
   provider: 'deepseek',
-  key: '',
-  url: '',
-  model: '',
-  name: '',
-  prompt: ''
+  key: '', url: '', model: '', name: '', prompt: ''
 };
-let memories = []; // 用户自定义记忆
-let history = [];  // 对话历史
-let bond = 15;
-let busy = false;
+let memories = [];   // 用户自定义记忆
+let history  = [];   // AI 上下文历史
+let chatLog  = [];   // 渲染日志 [{who,text,time,date}]
+let bond     = 15;
+let busy     = false;
+
+/* ── 日期标签 ── */
+function todayStr(){
+  const d=new Date();
+  return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')}`;
+}
 
 function loadState(){
   try {
     const s = localStorage.getItem(LS_KEY);
     if(s){
       const d=JSON.parse(s);
-      cfg = {...cfg,...(d.cfg||{})};
+      cfg      = {...cfg,...(d.cfg||{})};
       memories = d.memories||[];
-      bond = d.bond||15;
+      bond     = d.bond||15;
+      chatLog  = d.chatLog||[];
+      history  = d.history||[];
     }
   } catch(e){}
   // 填入表单
   document.getElementById('cfgProvider').value = cfg.provider;
-  document.getElementById('cfgKey').value = cfg.key;
-  document.getElementById('cfgUrl').value = cfg.url;
-  document.getElementById('cfgModel').value = cfg.model;
-  document.getElementById('cfgName').value = cfg.name;
-  document.getElementById('cfgPrompt').value = cfg.prompt;
+  document.getElementById('cfgKey').value      = cfg.key;
+  document.getElementById('cfgUrl').value      = cfg.url;
+  document.getElementById('cfgModel').value    = cfg.model;
+  document.getElementById('cfgName').value     = cfg.name;
+  document.getElementById('cfgPrompt').value   = cfg.prompt;
   onProviderChange();
   renderMemories();
   updateBond();
+  // 恢复聊天记录
+  if(chatLog.length>0) restoreChatLog();
 }
 
 function saveState(){
-  localStorage.setItem(LS_KEY, JSON.stringify({ cfg, memories, bond }));
+  localStorage.setItem(LS_KEY, JSON.stringify({ cfg, memories, bond, chatLog, history }));
+}
+
+/* ════════════════════════════════════
+   ✦ chatLog 恢复渲染
+════════════════════════════════════ */
+function restoreChatLog(){
+  hideWelcome();
+  const box = document.getElementById('messages');
+  let lastDate = '';
+  chatLog.forEach(entry=>{
+    if(entry.date && entry.date!==lastDate){
+      const sep=document.createElement('div');
+      sep.className='date-sep';
+      sep.textContent=entry.date;
+      box.appendChild(sep);
+      lastDate=entry.date;
+    }
+    renderBubble(entry.who, entry.text, entry.time, false);
+  });
+  scrollBottom();
 }
 
 /* ════════════════════════════════════
@@ -1209,6 +1471,24 @@ function appendSysmsg(text, isError=false){
 
 function appendMsg(text, who){
   hideWelcome();
+  const t = now();
+  const d = todayStr();
+  // 写入日志
+  chatLog.push({who, text, time:t, date:d});
+  // 如果是当天第一条消息，插入日期分隔
+  const box=document.getElementById('messages');
+  const lastSep = box.querySelector('.date-sep:last-of-type');
+  if(!lastSep || lastSep.textContent!==d){
+    const sep=document.createElement('div');
+    sep.className='date-sep';
+    sep.textContent=d;
+    box.appendChild(sep);
+  }
+  renderBubble(who, text, t, true);
+}
+
+/* 纯渲染，不写日志（用于存档恢复） */
+function renderBubble(who, text, time, animate){
   const box=document.getElementById('messages');
   const row=document.createElement('div');
   row.className=`msg-row ${who}`;
@@ -1218,15 +1498,15 @@ function appendMsg(text, who){
       <div class="m-avatar him">✦</div>
       <div class="m-body">
         <div class="m-name">沈星回</div>
-        <div class="bubble him">${formatText(escHtml(text))}</div>
-        <div class="m-time">${now()}</div>
+        <div class="bubble him" ${animate?'':'style="animation:none"'}>${formatText(escHtml(text))}</div>
+        <div class="m-time">${time}</div>
       </div>`;
   } else {
     row.innerHTML=`
       <div class="m-body">
         <div class="m-name">${escHtml(pName)}</div>
-        <div class="bubble me">${escHtml(text)}</div>
-        <div class="m-time">${now()}</div>
+        <div class="bubble me" ${animate?'':'style="animation:none"'}>${escHtml(text)}</div>
+        <div class="m-time">${time}</div>
       </div>
       <div class="m-avatar me">◎</div>`;
   }
@@ -1313,8 +1593,9 @@ async function sendMsg(){
     // 限制历史长度
     if(history.length>40) history=history.slice(-36);
 
-    // 增加羁绊值
+    // 增加羁绊值并持久化
     gainBond(1 + Math.floor(Math.random()*2));
+    saveState();
 
     // 随机触发粒子特效
     if(Math.random()<0.35) spawnParticle();
@@ -1373,6 +1654,7 @@ async function startChat(){
     const greet=data.choices[0].message.content.trim();
     appendMsg(greet,'him');
     history.push({role:'assistant',content:greet});
+    saveState();
   } catch(e){
     hideTyping();
     const sysMsgs=document.querySelectorAll('.sys-msg');
@@ -1409,12 +1691,186 @@ function autoH(el){
 }
 
 /* ════════════════════════════════════
+   ✦ 存档系统
+════════════════════════════════════ */
+
+/* —— Toast —— */
+let toastTimer=null;
+function showToast(msg, ms=2200){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),ms);
+}
+
+/* —— Modal 开关 —— */
+function openArchive(){
+  renderSlots();
+  document.getElementById('archiveBg').classList.add('show');
+}
+function closeArchive(){ document.getElementById('archiveBg').classList.remove('show'); }
+document.getElementById('archiveBg').addEventListener('click',function(e){
+  if(e.target===this) closeArchive();
+});
+
+/* —— Tab 切换 —— */
+function switchArchTab(name, btn){
+  document.querySelectorAll('.arch-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.arch-tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab'+(name==='local'?'Local':'File')).classList.add('active');
+}
+
+/* —— 存档快照 —— */
+function buildSnapshot(name){
+  return {
+    version:   2,
+    savedAt:   new Date().toISOString(),
+    slotName:  name || ('存档 '+new Date().toLocaleString('zh-CN')),
+    chatLog:   chatLog,
+    history:   history,
+    memories:  memories,
+    bond:      bond,
+    playerName:cfg.name
+  };
+}
+
+/* —— 加载快照到当前状态 —— */
+function applySnapshot(snap){
+  chatLog  = snap.chatLog  || [];
+  history  = snap.history  || [];
+  memories = snap.memories || [];
+  bond     = snap.bond     || 15;
+  if(snap.playerName) cfg.name = snap.playerName;
+  // 刷新 UI
+  updateBond();
+  renderMemories();
+  // 重新渲染消息区
+  const box=document.getElementById('messages');
+  box.innerHTML='';
+  if(chatLog.length>0){ restoreChatLog(); }
+  else {
+    box.innerHTML=`<div class="welcome-screen" id="welcomeScreen">
+      <div class="icon">✦</div><h2>记忆已还原</h2>
+      <p>存档加载成功，继续与沈星回的对话吧。</p>
+    </div>`;
+  }
+  saveState();
+}
+
+/* —— 槽位读写 —— */
+function getSlots(){
+  try{ return JSON.parse(localStorage.getItem(LS_SLOTS))||[]; }catch(e){ return []; }
+}
+function setSlots(slots){ localStorage.setItem(LS_SLOTS, JSON.stringify(slots)); }
+
+function renderSlots(){
+  const slots = getSlots();
+  const grid  = document.getElementById('slotGrid');
+  grid.innerHTML='';
+  for(let i=0;i<SLOT_COUNT;i++){
+    const s = slots[i]||null;
+    const card=document.createElement('div');
+    card.className='slot-card'+(s?'':' empty');
+    const msgCnt = s ? (s.chatLog||[]).length : 0;
+    const savedDate = s ? new Date(s.savedAt).toLocaleString('zh-CN') : '—';
+    card.innerHTML=`
+      <div class="slot-head">
+        <div class="slot-num">${i+1}</div>
+        <input class="slot-name-input" id="sname${i}"
+          value="${s?escHtml(s.slotName):''}"
+          placeholder="空存档槽"
+          ${s?'':'disabled'}>
+      </div>
+      <div class="slot-meta">
+        <span>💬 ${msgCnt} 条消息</span>
+        <span>✦ 羁绊 ${s?s.bond:0}%</span>
+        <span>🕐 ${savedDate}</span>
+      </div>
+      <div class="slot-actions">
+        <button class="slot-btn primary" onclick="saveToSlot(${i})">保存到此槽</button>
+        ${s?`<button class="slot-btn" onclick="loadFromSlot(${i})">读取</button>`:''}
+        ${s?`<button class="slot-btn danger" onclick="deleteSlot(${i})">删除</button>`:''}
+      </div>`;
+    grid.appendChild(card);
+  }
+}
+
+function saveToSlot(i){
+  const nameEl=document.getElementById('sname'+i);
+  const name=nameEl&&nameEl.value.trim()||('存档'+( i+1));
+  const slots=getSlots();
+  while(slots.length<=i) slots.push(null);
+  slots[i]=buildSnapshot(name);
+  setSlots(slots);
+  renderSlots();
+  showToast('✦ 已保存到槽位 '+(i+1));
+}
+
+function loadFromSlot(i){
+  const slots=getSlots();
+  const s=slots[i];
+  if(!s){ showToast('该槽位为空'); return; }
+  if(!confirm(`读取「${s.slotName}」？当前对话将被替换。`)) return;
+  applySnapshot(s);
+  closeArchive();
+  showToast('✦ 存档已读取：'+s.slotName);
+}
+
+function deleteSlot(i){
+  if(!confirm('确定删除该存档？')) return;
+  const slots=getSlots();
+  slots[i]=null;
+  setSlots(slots);
+  renderSlots();
+  showToast('存档已删除');
+}
+
+/* —— 文件导出 —— */
+function exportToFile(){
+  const snap=buildSnapshot('文件存档_'+todayStr());
+  const json=JSON.stringify(snap,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`星回存档_${todayStr()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✦ 存档文件已导出');
+}
+
+/* —— 文件导入 —— */
+function importFromFile(input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try {
+      const snap=JSON.parse(e.target.result);
+      if(!snap.chatLog && !snap.history) throw new Error('文件格式不正确');
+      if(!confirm(`导入「${snap.slotName||'存档'}」？当前对话将被替换。`)){
+        input.value=''; return;
+      }
+      applySnapshot(snap);
+      closeArchive();
+      showToast('✦ 存档导入成功：'+(snap.slotName||'已恢复'));
+    } catch(err){
+      showToast('导入失败：'+err.message);
+    }
+    input.value='';
+  };
+  reader.readAsText(file,'utf-8');
+}
+
+/* ════════════════════════════════════
    ✦ 初始化
 ════════════════════════════════════ */
 loadState();
 
-// 如果已有 key，直接开始对话
-if(cfg.key && history.length===0){
+// 如果已有 key 且没有聊天记录，发起问候
+if(cfg.key && chatLog.length===0){
   setTimeout(startChat, 600);
 } else if(!cfg.key){
   setTimeout(openModal, 800);
